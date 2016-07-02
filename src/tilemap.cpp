@@ -1,37 +1,25 @@
-#include "tilemap_actor.h"
+#include "tilemap.h"
 #include "gfx_util.h"
-#include "tile_actor.h"
 
 
-TileMapActor::TileMapActor()
+TileMap::TileMap()
+	: m_pMap(nullptr)
 {
 	
 }
 
-TileMapActor::TileMapActor(Tmx::Map* pMap)
-	: m_pMap(pMap)
+
+bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors)
 {
+	m_pMap = new Tmx::Map();
+	m_pMap->ParseFile(szMapPath);
+	if (m_pMap->HasError())
+	{
+		printf("error code: %d\n", m_pMap->GetErrorCode());
+		printf("error text: %s\n", m_pMap->GetErrorText().c_str());
+		return false;
+	}
 
-}
-
-
-TileMapActor::~TileMapActor()
-{}
-
-void TileMapActor::Update(float dt)
-{
-}
-
-void TileMapActor::Draw(sf::RenderWindow& window)
-{
-	//for (size_t i = 0; i < m_vImage.size(); ++i)
-	//{
-	//	window.draw(m_vImage[i].sprite);
-	//}
-}
-
-void TileMapActor::LoadAssets(std::vector<Actor*>& vActors)
-{
 	std::vector<Tmx::Tileset*> vTileset = m_pMap->GetTilesets();
 	m_vTilesetTexture.resize(vTileset.size());
 	for (size_t i = 0; i < vTileset.size(); ++i)
@@ -87,13 +75,25 @@ void TileMapActor::LoadAssets(std::vector<Actor*>& vActors)
 	}
 
 
+	return true;
 }
 
-void TileMapActor::UnloadAssets()
+void TileMap::Exit()
 {
 	for (size_t i = 0; i < m_vTilesetTexture.size(); ++i)
 	{
 		delete m_vTilesetTexture[i];
 	}
 	m_vTilesetTexture.clear();
+
+	//TODO (daniel) remove all actors created from the tilemap
+
+	delete m_pMap;
+	m_pMap = nullptr;
 }
+
+
+//void TileActor* TileMap::FillOutDefaultTile(TileActor* pTileActor)
+//{
+//
+//}
