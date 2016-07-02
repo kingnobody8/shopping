@@ -145,10 +145,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\box_actor.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\actor.h" />
+    <ClInclude Include="..\..\src\box_actor.h" />
     <ClInclude Include="..\..\src\event.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
