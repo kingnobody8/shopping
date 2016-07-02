@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\src\tilemap_actor.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\tile_actor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -273,6 +276,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tilemap_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tile_actor.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

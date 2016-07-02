@@ -67,9 +67,12 @@ int main(int argc, char** argv)
 	std::vector<Actor*> m_actors;
 
 	TileMapActor* tileMap = new TileMapActor(map);
+	tileMap->LoadAssets(m_actors);
 
 	m_actors.push_back(tileMap);
-	m_actors.push_back(new SpriteActor);
+
+	SpriteActor* man = new SpriteActor();
+	m_actors.push_back(man);
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
@@ -129,35 +132,13 @@ int main(int argc, char** argv)
 			}
 		}
 
-		// Iterate through the tile layers.
-		for (int i = 0; i < map->GetNumTileLayers(); ++i)
-		{
-			// Get a layer.
-			const Tmx::TileLayer *tileLayer = map->GetTileLayer(i);
-
-			for (int y = 0; y < tileLayer->GetHeight(); ++y)
-			{
-				for (int x = 0; x < tileLayer->GetWidth(); ++x)
-				{
-					if (tileLayer->GetTileTilesetIndex(x, y) != -1)
-					{
-						int tileId = tileLayer->GetTileId(x, y);
-						int tileGid = tileLayer->GetTileGid(x, y);
-						int tilesetId = tileLayer->GetTileTilesetIndex(x, y);
-
-						auto pTileset = map->GetTileset(tilesetId);
-						pTileset->GetTile(tileGid);
-
-					}
-				}
-			}
-		}
-
 		// Update actors
 		for (size_t i = 0; i < m_actors.size(); ++i)
 		{
 			m_actors[i]->Update(dt);
 		}
+
+		view.setCenter(man->GetPosition());
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));

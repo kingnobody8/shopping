@@ -12,11 +12,12 @@ public:
 	virtual void Update(float dt);
 	virtual void Draw(sf::RenderWindow& window);
 
-	void LoadAssets();
+	void LoadAssets(std::vector<Actor*>& vActors);
 	void UnloadAssets();
 
 private:
-	sf::Sprite m_sprite;
-	sf::Texture m_texture;
+	//sf::Sprite m_sprite;
+	//sf::Texture m_texture;
 	Tmx::Map* m_pMap;
+	std::vector<sf::Texture*> m_vTilesetTexture;
 };

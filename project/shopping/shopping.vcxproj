@@ -189,6 +189,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\sprite_actor.cpp" />
     <ClCompile Include="..\..\src\tilemap_actor.cpp" />
+    <ClCompile Include="..\..\src\tile_actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="..\..\src\item.h" />
     <ClInclude Include="..\..\src\sprite_actor.h" />
     <ClInclude Include="..\..\src\tilemap_actor.h" />
+    <ClInclude Include="..\..\src\tile_actor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\lib\tmx_parser\Tmx.h.in" />
