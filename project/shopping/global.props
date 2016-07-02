@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <root>$(SolutionDir)..</root>
+    <src_dir>$(root)\src</src_dir>
+    <lib_dir>$(root)\lib</lib_dir>
+    <build_dir>$(root)\build</build_dir>
+    <lib_out>$(build_dir)\lib\$(Platform)\$(Configuration)\</lib_out>
+    <bin_out>$(build_dir)\bin\$(Platform)\$(Configuration)\</bin_out>
+    <obj_out>$(build_dir)\obj\$(ProjectName)\$(Platform)\$(Configuration)\</obj_out>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="root">
+      <Value>$(root)</Value>
+    </BuildMacro>
+    <BuildMacro Include="src_dir">
+      <Value>$(src_dir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="lib_dir">
+      <Value>$(lib_dir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="build_dir">
+      <Value>$(build_dir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="lib_out">
+      <Value>$(lib_out)</Value>
+    </BuildMacro>
+    <BuildMacro Include="bin_out">
+      <Value>$(bin_out)</Value>
+    </BuildMacro>
+    <BuildMacro Include="obj_out">
+      <Value>$(obj_out)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
