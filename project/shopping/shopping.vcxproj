@@ -101,6 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../lib/tmx_parser/;../../lib/zlib/;../../lib/tinyxml2/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +146,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\base64\base64.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\miniz.c" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxEllipse.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxImage.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxImageLayer.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxLayer.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxMap.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxObject.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxObjectGroup.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPolygon.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPolyline.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPropertySet.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTerrain.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTerrainArray.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTile.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileLayer.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileOffset.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileset.cpp" />
+    <ClCompile Include="..\..\lib\tmx_parser\TmxUtil.cpp" />
+    <ClCompile Include="..\..\lib\zlib\adler32.c" />
+    <ClCompile Include="..\..\lib\zlib\compress.c" />
+    <ClCompile Include="..\..\lib\zlib\crc32.c" />
+    <ClCompile Include="..\..\lib\zlib\deflate.c" />
+    <ClCompile Include="..\..\lib\zlib\gzclose.c" />
+    <ClCompile Include="..\..\lib\zlib\gzlib.c" />
+    <ClCompile Include="..\..\lib\zlib\gzread.c" />
+    <ClCompile Include="..\..\lib\zlib\gzwrite.c" />
+    <ClCompile Include="..\..\lib\zlib\infback.c" />
+    <ClCompile Include="..\..\lib\zlib\inffast.c" />
+    <ClCompile Include="..\..\lib\zlib\inflate.c" />
+    <ClCompile Include="..\..\lib\zlib\inftrees.c" />
+    <ClCompile Include="..\..\lib\zlib\trees.c" />
+    <ClCompile Include="..\..\lib\zlib\uncompr.c" />
+    <ClCompile Include="..\..\lib\zlib\zutil.c" />
     <ClCompile Include="..\..\src\box_actor.cpp" />
     <ClCompile Include="..\..\src\customer.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
@@ -153,12 +189,48 @@
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\base64\base64.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxEllipse.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxImage.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxImageLayer.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxLayer.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxMap.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxMapTile.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxObject.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxObjectGroup.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPoint.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPolygon.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPolyline.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPropertySet.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTerrain.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTerrainArray.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTile.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileLayer.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileOffset.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileset.h" />
+    <ClInclude Include="..\..\lib\tmx_parser\TmxUtil.h" />
+    <ClInclude Include="..\..\lib\zlib\crc32.h" />
+    <ClInclude Include="..\..\lib\zlib\deflate.h" />
+    <ClInclude Include="..\..\lib\zlib\gzguts.h" />
+    <ClInclude Include="..\..\lib\zlib\inffast.h" />
+    <ClInclude Include="..\..\lib\zlib\inffixed.h" />
+    <ClInclude Include="..\..\lib\zlib\inflate.h" />
+    <ClInclude Include="..\..\lib\zlib\inftrees.h" />
+    <ClInclude Include="..\..\lib\zlib\trees.h" />
+    <ClInclude Include="..\..\lib\zlib\zconf.h" />
+    <ClInclude Include="..\..\lib\zlib\zlib.h" />
+    <ClInclude Include="..\..\lib\zlib\zutil.h" />
     <ClInclude Include="..\..\src\actor.h" />
     <ClInclude Include="..\..\src\box_actor.h" />
     <ClInclude Include="..\..\src\customer.h" />
     <ClInclude Include="..\..\src\event.h" />
     <ClInclude Include="..\..\src\grocery_list.h" />
     <ClInclude Include="..\..\src\item.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\lib\tmx_parser\Tmx.h.in" />
+    <None Include="..\..\lib\tmx_parser\tmxparser.pc.in" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

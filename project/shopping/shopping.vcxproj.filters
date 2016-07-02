@@ -4,6 +4,21 @@
     <Filter Include="src">
       <UniqueIdentifier>{b2dc10f5-c8a8-4358-96b9-c40c3f4b89e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{b08b7cfb-3ed2-492a-8b2b-34b1d604c18e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\tinyxml2">
+      <UniqueIdentifier>{4d0a583b-df14-43ad-88ea-3ce7507a504a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\zlib">
+      <UniqueIdentifier>{6c6db20e-c627-4c81-8b09-aa370268f118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\tmx_parser">
+      <UniqueIdentifier>{dc5657ae-0947-4ea5-8a3b-a92b15a9c9f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\tmx_parser\base64">
+      <UniqueIdentifier>{d566113e-c205-43c0-bd9a-e6c4f92a6b92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -23,6 +38,111 @@
     </ClCompile>
     <ClCompile Include="..\..\src\item.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tinyxml2\tinyxml2.cpp">
+      <Filter>lib\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPolygon.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPolyline.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxPropertySet.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTerrain.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTerrainArray.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTile.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileLayer.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileOffset.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxTileset.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxUtil.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\miniz.c">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxEllipse.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxImage.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxImageLayer.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxLayer.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxMap.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxObject.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\TmxObjectGroup.cpp">
+      <Filter>lib\tmx_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\tmx_parser\base64\base64.cpp">
+      <Filter>lib\tmx_parser\base64</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\inflate.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\inftrees.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\trees.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\uncompr.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\zutil.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\adler32.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\compress.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\crc32.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\deflate.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\gzclose.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\gzlib.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\gzread.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\gzwrite.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\infback.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\zlib\inffast.c">
+      <Filter>lib\zlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,5 +164,109 @@
     <ClInclude Include="..\..\src\item.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h">
+      <Filter>lib\tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxObjectGroup.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPoint.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPolygon.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPolyline.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxPropertySet.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTerrain.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTerrainArray.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTile.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileLayer.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileOffset.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxTileset.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxUtil.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxEllipse.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxImage.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxImageLayer.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxLayer.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxMap.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxMapTile.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\TmxObject.h">
+      <Filter>lib\tmx_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\tmx_parser\base64\base64.h">
+      <Filter>lib\tmx_parser\base64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\inffixed.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\inflate.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\inftrees.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\trees.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\zconf.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\zlib.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\zutil.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\crc32.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\deflate.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\gzguts.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\inffast.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\lib\tmx_parser\tmxparser.pc.in">
+      <Filter>lib\tmx_parser</Filter>
+    </None>
+    <None Include="..\..\lib\tmx_parser\Tmx.h.in">
+      <Filter>lib\tmx_parser</Filter>
+    </None>
   </ItemGroup>
 </Project>

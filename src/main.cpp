@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
 	Item red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250);
-	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_SODA, 300);
+	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300);
 
 	GroceryList gc;
 	gc.AddItem(blue_milk);
