@@ -15,6 +15,15 @@
     <ClCompile Include="..\..\src\box_actor.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\customer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\grocery_list.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\item.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -24,6 +33,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\box_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\customer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grocery_list.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\item.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

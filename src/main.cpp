@@ -1,9 +1,49 @@
 #include <SFML\Graphics.hpp>
 #include "box_actor.h"
 #include <vector>
+#include "customer.h"
+
+void PrintCustomer(Customer* c)
+{
+	printf("Customer Wallet: %d\n", c->GetMunny());
+	printf("List:\n");
+	c->PrintGroceryList();
+	printf("Inventory:\n");
+	c->PrintInventory();
+}
+
+void AddItemAttempt(Customer* c, Item* i)
+{
+	printf("Adding item: %d %s\n", i->GetCost(), i->GetItemName().c_str());
+	printf("Customer wallet: %d\n", c->GetMunny());
+	bool canAdd = c->CanAddItem(*i);
+	printf("CanAddItem: %d\n", canAdd);
+
+	if (canAdd)
+	{
+		c->AddItem(*i);
+		PrintCustomer(c);
+	}
+	printf("\n\n");
+}
 
 int main(int argc, char** argv)
 {
+	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
+	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
+	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
+	Item red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250);
+	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_SODA, 300);
+
+	GroceryList gc;
+	gc.AddItem(blue_milk);
+	gc.AddItem(green_eggs);
+	gc.AddItem(white_meat);
+	gc.AddItem(red_candy);
+
+	Customer customer(gc, 1000);
+
+
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
@@ -29,7 +69,42 @@ int main(int argc, char** argv)
 			{
 				window.close();
 			}
+
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num1)
+			{
+				AddItemAttempt(&customer, &blue_milk);
+			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num2)
+			{
+				AddItemAttempt(&customer, &green_eggs);
+			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num3)
+			{
+				AddItemAttempt(&customer, &white_meat);
+			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num4)
+			{
+				AddItemAttempt(&customer, &red_candy);
+			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num5)
+			{
+				AddItemAttempt(&customer, &blue_eggs);
+			}
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R)
+			{
+				gc = GroceryList();
+				gc.AddItem(blue_milk);
+				gc.AddItem(green_eggs);
+				gc.AddItem(white_meat);
+				gc.AddItem(red_candy);
+
+				customer =  Customer(gc, 1000);
+
+				PrintCustomer(&customer);
+			}
 		}
+
+
 
 		// Update actors
 		for (size_t i = 0; i < m_actors.size(); ++i)

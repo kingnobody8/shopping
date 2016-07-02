@@ -1,0 +1,9 @@
+diff a/project/shopping/shopping.vcxproj b/project/shopping/shopping.vcxproj	(rejected hunks)
+@@ -168,6 +168,7 @@
+      <ClInclude Include="..\..\src\customer.h" />
+      <ClInclude Include="..\..\src\grocery_list.h" />
+      <ClInclude Include="..\..\src\item.h" />
+++>>>>>>> Stashed changes
+    </ItemGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+    <ImportGroup Label="ExtensionTargets">
