@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\src\box_actor.h" />
     <ClInclude Include="..\..\src\customer.h" />
     <ClInclude Include="..\..\src\event.h" />
+    <ClInclude Include="..\..\src\gfx_util.h" />
     <ClInclude Include="..\..\src\grocery_list.h" />
     <ClInclude Include="..\..\src\item.h" />
   </ItemGroup>
