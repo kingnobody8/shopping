@@ -148,11 +148,14 @@
     <ClCompile Include="..\..\src\box_actor.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\sprite_actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\actor.h" />
     <ClInclude Include="..\..\src\box_actor.h" />
     <ClInclude Include="..\..\src\event.h" />
+    <ClInclude Include="..\..\src\gfx_util.h" />
+    <ClInclude Include="..\..\src\sprite_actor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
