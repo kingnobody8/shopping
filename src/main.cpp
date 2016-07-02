@@ -1,4 +1,6 @@
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
 #include "debug_text.h"
 #include "box_actor.h"
 #include "sprite_actor.h"
@@ -77,6 +79,12 @@ int main(int argc, char** argv)
 
 	Customer customer(gc, 1000);
 
+	sf::Music music;
+	if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
+	{
+		music.setLoop(true);
+		music.play();
+	}
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
