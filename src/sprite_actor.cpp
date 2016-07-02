@@ -2,34 +2,38 @@
 #include "gfx_util.h"
 
 // [direction][frame]
-static sf::IntRect s_characterFrames[][3] =
+static sf::IntRect s_characterFrames[][4] =
 {
 	// North
 	{
-		{0, 0, 32, 32},
 		{64, 0, 32, 32},
+		{0, 0, 32, 32},
 		{32, 96, 32, 32},
+		{0, 0, 32, 32},
 	},
 
 	// South
 	{
-		{64, 32, 32, 32},
 		{64, 96, 32, 32},
+		{64, 32, 32, 32},
 		{64, 64, 32, 32},
+		{64, 32, 32, 32},
 	},
 	
 	// East
 	{
-		{32, 0, 32, 32},
 		{32, 64, 32, 32},
+		{32, 0, 32, 32},
 		{32, 32, 32, 32},
+		{32, 0, 32, 32},
 	},
 
 	// West
 	{
-		{0, 64, 32, 32},
 		{0, 96, 32, 32},
+		{0, 64, 32, 32},
 		{0, 32, 32, 32},
+		{0, 64, 32, 32},
 	},
 };
 
@@ -44,7 +48,7 @@ static sf::Vector2i s_characterDeltas[] =
 
 SpriteActor::SpriteActor()
 	: m_frame(0)
-	, m_totalFrames(3)
+	, m_totalFrames(4)
 	, m_animTimer(0.0f)
 	, m_speed(32.0f)
 {
@@ -86,7 +90,7 @@ void SpriteActor::Update(float dt)
 
 	if (m_velocity.x == 0 && m_velocity.y == 0)
 	{
-		m_frame = 0;
+		m_frame = 1;
 		SetFacing(m_facing);
 	}
 	else
