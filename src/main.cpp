@@ -10,6 +10,18 @@
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
+std::vector<Actor*> g_actors;
+
+void RegisterActor(Actor* actor)
+{
+	g_actors.push_back(actor);
+}
+
+void DestroyActor(Actor* actor)
+{
+	g_actors.erase(std::find(g_actors.begin(), g_actors.end(), actor));
+	delete actor;
+}
 
 void PrintCustomer(Customer* c)
 {
@@ -37,7 +49,7 @@ void AddItemAttempt(Customer* c, Item* i)
 
 int main(int argc, char** argv)
 {
-	
+
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
@@ -56,18 +68,15 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
-	std::vector<Actor*> m_actors;
-
 	TileMap tMap;
-	tMap.Init("assets/test_shop.tmx", m_actors);
+	tMap.Init("assets/test_shop.tmx", g_actors);
 
 	g_defaultFont = new sf::Font;
 
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
 
-	SpriteActor* man = new SpriteActor();
-	m_actors.push_back(man);
+	SpriteActor* man = CreateActor<SpriteActor>();
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
@@ -128,9 +137,9 @@ int main(int argc, char** argv)
 		}
 
 		// Update actors
-		for (size_t i = 0; i < m_actors.size(); ++i)
+		for (size_t i = 0; i < g_actors.size(); ++i)
 		{
-			m_actors[i]->Update(dt);
+			g_actors[i]->Update(dt);
 		}
 
 		view.setCenter(man->GetPosition());
@@ -145,9 +154,9 @@ int main(int argc, char** argv)
 		window.setView(view);
 
 		// Draw actors
-		for (size_t i = 0; i < m_actors.size(); ++i)
+		for (size_t i = 0; i < g_actors.size(); ++i)
 		{
-			m_actors[i]->Draw(window);
+			g_actors[i]->Draw(window);
 		}
 
 		// Display window
