@@ -27,6 +27,12 @@
     <ClCompile Include="..\..\src\sprite_actor.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\text_actor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\debug_text.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -51,6 +57,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\sprite_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\text_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\debug_text.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

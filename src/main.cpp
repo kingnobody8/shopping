@@ -1,8 +1,13 @@
 #include <SFML\Graphics.hpp>
+#include "debug_text.h"
 #include "box_actor.h"
 #include "sprite_actor.h"
+#include "text_actor.h"
 #include <vector>
 #include "customer.h"
+
+sf::Font* g_defaultFont;
+sf::Text g_debugText;
 
 void PrintCustomer(Customer* c)
 {
@@ -49,6 +54,11 @@ int main(int argc, char** argv)
 	window.setActive();
 
 	std::vector<Actor*> m_actors;
+
+	g_defaultFont = new sf::Font;
+
+	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
+	g_debugText.setFont(*g_defaultFont);
 
 	m_actors.push_back(new SpriteActor);
 
@@ -121,6 +131,9 @@ int main(int argc, char** argv)
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
 
+		window.setView(window.getDefaultView());
+		window.draw(g_debugText);
+
 		// Set active camera
 		window.setView(view);
 
@@ -133,6 +146,8 @@ int main(int argc, char** argv)
 		// Display window
 		window.display();
 	}
+
+	delete g_defaultFont;
 
 	return 0;
 }

@@ -147,21 +147,25 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\box_actor.cpp" />
     <ClCompile Include="..\..\src\customer.cpp" />
+    <ClCompile Include="..\..\src\debug_text.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
     <ClCompile Include="..\..\src\grocery_list.cpp" />
     <ClCompile Include="..\..\src\item.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\sprite_actor.cpp" />
+    <ClCompile Include="..\..\src\text_actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\actor.h" />
     <ClInclude Include="..\..\src\box_actor.h" />
     <ClInclude Include="..\..\src\customer.h" />
+    <ClInclude Include="..\..\src\debug_text.h" />
     <ClInclude Include="..\..\src\event.h" />
     <ClInclude Include="..\..\src\gfx_util.h" />
     <ClInclude Include="..\..\src\grocery_list.h" />
     <ClInclude Include="..\..\src\item.h" />
     <ClInclude Include="..\..\src\sprite_actor.h" />
+    <ClInclude Include="..\..\src\text_actor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
