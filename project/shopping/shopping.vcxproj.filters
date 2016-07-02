@@ -9,5 +9,13 @@
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\event.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\event.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
