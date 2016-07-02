@@ -8,7 +8,7 @@
 #include <vector>
 #include "customer.h"
 #include "Tmx.h.in"
-#include "tilemap_actor.h"
+#include "tilemap.h"
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
@@ -51,19 +51,6 @@ void AddItemAttempt(Customer* c, Item* i)
 
 int main(int argc, char** argv)
 {
-	Tmx::Map *map = new Tmx::Map();
-	std::string fileName = (argc > 1) ? argv[1] : "assets/test_shop.tmx";
-	map->ParseFile(fileName);
-
-	if (map->HasError())
-	{
-		printf("error code: %d\n", map->GetErrorCode());
-		printf("error text: %s\n", map->GetErrorText().c_str());
-
-		system("pause");
-
-		return map->GetErrorCode();
-	}
 
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
@@ -89,15 +76,13 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
+	TileMap tMap;
+	tMap.Init("assets/test_shop.tmx", g_actors);
+
 	g_defaultFont = new sf::Font;
 
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
-
-	TileMapActor* tileMap = new TileMapActor(map);
-	tileMap->LoadAssets(g_actors);
-
-	g_actors.push_back(tileMap);
 
 	SpriteActor* man = CreateActor<SpriteActor>();
 
