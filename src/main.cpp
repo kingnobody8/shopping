@@ -1,8 +1,10 @@
 #include <SFML\Graphics.hpp>
 #include "box_actor.h"
+#include "sprite_actor.h"
 #include <vector>
 #include "customer.h"
 #include "Tmx.h.in"
+#include "tilemap_actor.h"
 
 void PrintCustomer(Customer* c)
 {
@@ -31,7 +33,7 @@ void AddItemAttempt(Customer* c, Item* i)
 int main(int argc, char** argv)
 {
 	Tmx::Map *map = new Tmx::Map();
-	std::string fileName = (argc > 1) ? argv[1] : "../../assets/test_shop.tmx";
+	std::string fileName = (argc > 1) ? argv[1] : "assets/test_shop.tmx";
 	map->ParseFile(fileName);
 
 	if (map->HasError())
@@ -64,7 +66,15 @@ int main(int argc, char** argv)
 
 	std::vector<Actor*> m_actors;
 
-	m_actors.push_back(new BoxActor);
+	TileMapActor* tileMap = new TileMapActor(map);
+
+	m_actors.push_back(tileMap);
+	m_actors.push_back(new SpriteActor);
+
+	// Create the camera, origin at center
+	const float w = 352.0f;	// '11' cells
+	const float h = 256.0f; // '8' cells
+	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
 
 	sf::Clock clock;
 	while (window.isOpen())
@@ -119,7 +129,29 @@ int main(int argc, char** argv)
 			}
 		}
 
+		// Iterate through the tile layers.
+		for (int i = 0; i < map->GetNumTileLayers(); ++i)
+		{
+			// Get a layer.
+			const Tmx::TileLayer *tileLayer = map->GetTileLayer(i);
 
+			for (int y = 0; y < tileLayer->GetHeight(); ++y)
+			{
+				for (int x = 0; x < tileLayer->GetWidth(); ++x)
+				{
+					if (tileLayer->GetTileTilesetIndex(x, y) != -1)
+					{
+						int tileId = tileLayer->GetTileId(x, y);
+						int tileGid = tileLayer->GetTileGid(x, y);
+						int tilesetId = tileLayer->GetTileTilesetIndex(x, y);
+
+						auto pTileset = map->GetTileset(tilesetId);
+						pTileset->GetTile(tileGid);
+
+					}
+				}
+			}
+		}
 
 		// Update actors
 		for (size_t i = 0; i < m_actors.size(); ++i)
@@ -129,6 +161,9 @@ int main(int argc, char** argv)
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
+
+		// Set active camera
+		window.setView(view);
 
 		// Draw actors
 		for (size_t i = 0; i < m_actors.size(); ++i)

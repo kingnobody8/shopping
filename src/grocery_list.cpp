@@ -73,6 +73,7 @@ GroceryList::CheckSlot* GroceryList::FindCheckSlotByType(const Item::EType& eTyp
 {
 	switch (eCheckState)
 	{
+	default:
 	case ECheckState::ECS_INVALID: return "ECS_INVALID";
 	case ECheckState::ECS_EMPTY: return "EMPTY";
 	case ECheckState::ECS_HIDDEN: return "HIDDEN";

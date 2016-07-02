@@ -187,6 +187,8 @@
     <ClCompile Include="..\..\src\grocery_list.cpp" />
     <ClCompile Include="..\..\src\item.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\sprite_actor.cpp" />
+    <ClCompile Include="..\..\src\tilemap_actor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h" />
@@ -228,6 +230,8 @@
     <ClInclude Include="..\..\src\gfx_util.h" />
     <ClInclude Include="..\..\src\grocery_list.h" />
     <ClInclude Include="..\..\src\item.h" />
+    <ClInclude Include="..\..\src\sprite_actor.h" />
+    <ClInclude Include="..\..\src\tilemap_actor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\lib\tmx_parser\Tmx.h.in" />
