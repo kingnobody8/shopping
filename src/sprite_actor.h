@@ -21,6 +21,7 @@ public:
 	virtual void Draw(sf::RenderWindow& window);
 
 	void SetFacing(CharacterDirection direction);
+	sf::Vector2f GetPosition() { return m_sprite.getPosition(); }
 
 private:
 	void CheckKey(sf::Keyboard::Key key, int i, float dt);

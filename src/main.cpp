@@ -5,6 +5,8 @@
 #include "text_actor.h"
 #include <vector>
 #include "customer.h"
+#include "Tmx.h.in"
+#include "tilemap_actor.h"
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
@@ -35,11 +37,25 @@ void AddItemAttempt(Customer* c, Item* i)
 
 int main(int argc, char** argv)
 {
+	Tmx::Map *map = new Tmx::Map();
+	std::string fileName = (argc > 1) ? argv[1] : "assets/test_shop.tmx";
+	map->ParseFile(fileName);
+
+	if (map->HasError())
+	{
+		printf("error code: %d\n", map->GetErrorCode());
+		printf("error text: %s\n", map->GetErrorText().c_str());
+
+		system("pause");
+
+		return map->GetErrorCode();
+	}
+
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
 	Item red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250);
-	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_SODA, 300);
+	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300);
 
 	GroceryList gc;
 	gc.AddItem(blue_milk);
@@ -61,6 +77,13 @@ int main(int argc, char** argv)
 	g_debugText.setFont(*g_defaultFont);
 
 	m_actors.push_back(new SpriteActor);
+	TileMapActor* tileMap = new TileMapActor(map);
+	tileMap->LoadAssets(m_actors);
+
+	m_actors.push_back(tileMap);
+
+	SpriteActor* man = new SpriteActor();
+	m_actors.push_back(man);
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
@@ -120,13 +143,13 @@ int main(int argc, char** argv)
 			}
 		}
 
-
-
 		// Update actors
 		for (size_t i = 0; i < m_actors.size(); ++i)
 		{
 			m_actors[i]->Update(dt);
 		}
+
+		view.setCenter(man->GetPosition());
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
