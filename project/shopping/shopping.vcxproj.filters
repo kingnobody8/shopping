@@ -164,6 +164,9 @@
     <ClInclude Include="..\..\src\item.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\gfx_util.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h">
       <Filter>lib\tinyxml2</Filter>
     </ClInclude>

@@ -2,6 +2,7 @@
 #include "box_actor.h"
 #include <vector>
 #include "customer.h"
+#include "Tmx.h.in"
 
 void PrintCustomer(Customer* c)
 {
@@ -29,6 +30,20 @@ void AddItemAttempt(Customer* c, Item* i)
 
 int main(int argc, char** argv)
 {
+	Tmx::Map *map = new Tmx::Map();
+	std::string fileName = (argc > 1) ? argv[1] : "../../assets/test_shop.tmx";
+	map->ParseFile(fileName);
+
+	if (map->HasError())
+	{
+		printf("error code: %d\n", map->GetErrorCode());
+		printf("error text: %s\n", map->GetErrorText().c_str());
+
+		system("pause");
+
+		return map->GetErrorCode();
+	}
+
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
