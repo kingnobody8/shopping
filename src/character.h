@@ -27,6 +27,9 @@ public:
 	void SetSkin(short skin);
 
 private:
+	void ApplyMotion(sf::Vector2f velocity);
+	bool ValidatePosition(float x, float y);
+
 	short m_frame;
 	short m_totalFrames;
 	CharacterDirection m_facing;

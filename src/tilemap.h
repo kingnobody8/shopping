@@ -4,7 +4,7 @@
 #include <map>
 #include "player.h"
 
-
+const class TileMap& GetCurrentMap();
 class TileMap
 {
 public:
@@ -16,6 +16,11 @@ public:
 	inline Player* GetPlayer() const { return m_pPlayer; }
 
 	std::vector<Actor*> PerformCollisionTest(const sf::IntRect& rect);
+
+	int GetTileWidth() const;
+	int GetTileHeight() const;
+
+	Actor* GetTileActorAt(int x, int y, int layer) const;
 
 private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);

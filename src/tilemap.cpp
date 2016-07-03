@@ -127,6 +127,28 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 	return ret;
 }
 
+int TileMap::GetTileWidth() const
+{
+	return m_pMap->GetTileWidth();
+}
+
+int TileMap::GetTileHeight() const
+{
+	return m_pMap->GetTileHeight();
+}
+
+Actor* TileMap::GetTileActorAt(int x, int y, int layer) const
+{
+	const Tmx::TileLayer* tileLayer = m_pMap->GetTileLayer(layer);
+	int width = tileLayer->GetWidth();
+	int index = y * width + x;
+	if (index >= 0 && index < (int) m_vTileLayerGrid[layer].size())
+	{
+		return m_vTileLayerGrid[layer][index];
+	}
+	return nullptr;
+}
+
 
 void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer) 
 {

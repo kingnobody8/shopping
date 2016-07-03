@@ -1,6 +1,7 @@
 #include "character.h"
 #include "character_controller.h"
 #include "gfx_util.h"
+#include "tilemap.h"
 
 static const int FRAME_WIDTH = 32;
 static const int FRAME_HEIGHT = 32;
@@ -43,6 +44,21 @@ static int s_characterFrameMapping[][4][2] =
 		{0, 1},
 		{0, 2},
 	},
+};
+
+static sf::IntRect s_characterCollisionOffsets[] = 
+{
+	// North
+	{10, 23, 13, 7},
+
+	// South
+	{10, 23, 13, 7},
+
+	// East
+	{10, 23, 13, 7},
+
+	// West
+	{10, 23, 13, 7},
 };
 
 // [skin][direction][frame]
@@ -124,7 +140,9 @@ void Character::Update(float dt)
 {
 	m_controller->Update(dt);
 
-	m_sprite.move(m_velocity);
+	//m_sprite.move(m_velocity);
+
+	ApplyMotion(m_velocity);
 
 	if (m_velocity.x == 0 && m_velocity.y == 0)
 	{
@@ -173,4 +191,81 @@ void Character::SetSkin(short skin)
 	{
 		m_skin = skin;
 	}
+}
+
+void Character::ApplyMotion(sf::Vector2f velocity)
+{
+	static const int MAX_ITERATIONS = 100;
+	sf::Vector2f positionStep;
+	sf::Vector2f position = m_sprite.getPosition();
+
+	positionStep.x = velocity.x * 0.16f;
+	positionStep.y = velocity.y * 0.16f;
+
+	for (int i = 0; i < MAX_ITERATIONS; ++i)
+	{
+		// Collide on x
+		if (ValidatePosition(position.x + positionStep.x, position.y))
+		{
+			position.x += positionStep.x;
+		}
+		else
+		{
+			m_velocity.x = 0;
+		}
+
+		// Collide on y
+		if (ValidatePosition(position.x, position.y + positionStep.y))
+		{
+			position.y += positionStep.y;
+		}
+		else
+		{
+			m_velocity.y = 0;
+		}
+
+		velocity -= positionStep;
+
+		// Break conditions
+		if (positionStep.x > 0 && velocity.x <= 0) positionStep.x = 0;	// Got stopped moving left
+		if (positionStep.x < 0 && velocity.x >= 0) positionStep.x = 0;	// Got stopped moving right
+
+		if (positionStep.y > 0 && velocity.y <= 0) positionStep.y = 0;	// Got stopped moving up
+		if (positionStep.y < 0 && velocity.y >= 0) positionStep.y = 0;	// Got stopped moving down
+
+		if (velocity.x == 0) positionStep.x = 0;						// Not moving anymore
+		if (velocity.y == 0) positionStep.y = 0;
+
+		// Break if not moving or no change in position
+		if (velocity.x   == 0 && velocity.y   == 0)   break;
+		if (positionStep.x  == 0 && positionStep.y  == 0)   break;
+	}
+
+	m_sprite.setPosition(position);
+}
+
+bool Character::ValidatePosition(float x, float y)
+{
+	bool posValid = true;
+	const TileMap& map = GetCurrentMap();
+	
+	// Collision check on map
+	int startX = (int) ((x + s_characterCollisionOffsets[m_facing].left) / map.GetTileWidth());
+	int startY = (int) ((y + s_characterCollisionOffsets[m_facing].top) / map.GetTileHeight());
+	int endX   = (int) ((x + m_sprite.getLocalBounds().width - s_characterCollisionOffsets[m_facing].width) / map.GetTileWidth());
+	int endY   = (int) ((y + m_sprite.getLocalBounds().height - s_characterCollisionOffsets[m_facing].height) / map.GetTileHeight());
+
+	for (int iy = startY; iy <= endY; ++iy)
+	{
+		for (int ix = startX; ix <= endX; ++ix)
+		{
+			Actor* tileActor = map.GetTileActorAt(ix, iy, 1);
+			if (tileActor)
+			{
+				posValid = false;
+			}
+		}
+	}
+
+	return posValid;
 }

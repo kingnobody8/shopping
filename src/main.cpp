@@ -15,6 +15,12 @@ sf::Font* g_defaultFont;
 sf::Text g_debugText;
 sf::RectangleShape g_debugTextBackground;
 std::vector<Actor*> g_actors;
+TileMap g_map;
+
+const TileMap& GetCurrentMap()
+{
+	return g_map;
+}
 
 void RegisterActor(Actor* actor)
 {
@@ -79,8 +85,7 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
-	TileMap tMap;
-	tMap.Init("assets/test_shop.tmx");
+	g_map.Init("assets/test_shop.tmx");
 
 	g_defaultFont = new sf::Font;
 
@@ -88,11 +93,11 @@ int main(int argc, char** argv)
 	g_debugText.setFont(*g_defaultFont);
 	g_debugTextBackground.setFillColor(sf::Color::Black);
 
-	Player* man = tMap.GetPlayer();
+	Player* man = g_map.GetPlayer();
 
 	// Create the camera, origin at center
-	const float w = 352.0f;	// '11' cells
-	const float h = 256.0f; // '8' cells
+	const float w = 176;	// '11' cells
+	const float h = 128; // '8' cells
 	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
 	sf::IntRect camMoveRect;
 	camMoveRect.left = view.getCenter().x - view.getSize().x / 3.0f;
@@ -169,44 +174,6 @@ int main(int argc, char** argv)
 			g_actors[i]->Update(dt);
 		}
 
-		auto collides =	tMap.PerformCollisionTest(man->GetRect());
-		if(!collides.empty())
-		{
-			for (size_t i = 0; i < collides.size(); ++i)
-			{
-				TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
-				sf::IntRect tileRect = pTileActor->GetRect();
-				sf::IntRect manRect = man->GetRect();
-				sf::IntRect intersect;
-				tileRect.intersects(manRect, intersect);
-
-				int multi = 1;
-				if (intersect.width > intersect.height)
-				{
-					intersect.width = 0;
-					if (manRect.top > tileRect.top)
-					{
-						multi = -1;
-					}
-				}
-				else
-				{
-					intersect.height = 0;
-					if (manRect.left > tileRect.left)
-					{
-						multi = -1;
-					}
-				}
-
-				sf::Vector2f diff(intersect.width, intersect.height);
-				diff.x *= multi;
-				diff.y *= multi;
-
-				man->SetPosition(man->GetPosition() - diff);
-			}
-		}
-
-
 		sf::IntRect manRect = man->GetRect();
 		bool bSet = false;
 		if (manRect.left < camMoveRect.left)
@@ -279,7 +246,7 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
-		DebugPrintf("Munny: %d", customer.GetMunny());
+	//	DebugPrintf("Munny: %d", customer.GetMunny());
 
 		// Debug text
 		window.setView(window.getDefaultView());
