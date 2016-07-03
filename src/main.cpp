@@ -53,6 +53,7 @@ void AddItemAttempt(Customer* c, Item* i)
 int main(int argc, char** argv)
 {
 
+
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
@@ -91,6 +92,13 @@ int main(int argc, char** argv)
 	const float w = 352.0f;	// '11' cells
 	const float h = 256.0f; // '8' cells
 	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
+	sf::IntRect camMoveRect;
+	camMoveRect.left = view.getCenter().x - view.getSize().x / 3.0f;
+	camMoveRect.top = view.getCenter().y - view.getSize().y / 3.0f;
+	camMoveRect.width = view.getSize().x / 3.0f;
+	camMoveRect.height = view.getSize().y / 3.0f;
+	//(view.getCenter() - view.getSize() / 3.0f, view.getCenter + view.)
+
 
 	sf::Clock clock;
 	while (window.isOpen())
@@ -188,7 +196,35 @@ int main(int argc, char** argv)
 		}
 	}
 
-		view.setCenter(man->GetPosition());
+
+	sf::IntRect manRect = man->GetRect();
+	bool bSet = false;
+	if (manRect.left < camMoveRect.left)
+	{
+		camMoveRect.left = manRect.left;
+		bSet = true;
+	}
+	if (manRect.top < camMoveRect.top)
+	{
+		camMoveRect.top = manRect.top;
+		bSet = true;
+	}
+	if (manRect.left + manRect.width > camMoveRect.left + camMoveRect.width)
+	{
+		camMoveRect.left = manRect.left + manRect.width - camMoveRect.width;
+		bSet = true;
+	}
+	if (manRect.top + manRect.height > camMoveRect.top + camMoveRect.height)
+	{
+		camMoveRect.top = manRect.top + manRect.height - camMoveRect.height;
+		bSet = true;
+	}
+
+	if (bSet)
+	{
+		view.setCenter(camMoveRect.left + camMoveRect.width / 2.0f, camMoveRect.top + camMoveRect.height / 2.0f);
+	}
+
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
@@ -211,6 +247,27 @@ int main(int argc, char** argv)
 		verts[3].position.y = 16;
 		verts[2].color = verts[3].color = sf::Color(0, 255, 0);
 		window.draw(verts, 4, sf::PrimitiveType::Lines);
+
+		sf::VertexArray camRectVerts;
+		camRectVerts.resize(5);
+		camRectVerts[0].position.x = camMoveRect.left;
+		camRectVerts[0].position.y = camMoveRect.top;
+		camRectVerts[1].position.x = camMoveRect.left + camMoveRect.width;
+		camRectVerts[1].position.y = camMoveRect.top;
+		camRectVerts[2].position.x = camMoveRect.left + camMoveRect.width;
+		camRectVerts[2].position.y = camMoveRect.top + camMoveRect.height;
+		camRectVerts[3].position.x = camMoveRect.left;
+		camRectVerts[3].position.y = camMoveRect.top + camMoveRect.height;
+		camRectVerts[4].position.x = camMoveRect.left;
+		camRectVerts[4].position.y = camMoveRect.top;
+
+		for (int i = 0; i < camRectVerts.getVertexCount(); ++i)
+		{
+			camRectVerts[i].color = sf::Color::Blue;
+		}
+
+		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
+
 
 		// Display window
 		window.display();
