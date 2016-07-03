@@ -13,7 +13,7 @@ public:
 
 	const sf::Vector2f& GetPosition() { return m_sprite.getPosition(); }
 	void SetPosition(const sf::Vector2f pos) { m_sprite.setPosition(pos); }
-	sf::IntRect GetRect();
+	virtual sf::IntRect GetRect();
 
 protected:
 	sf::Sprite m_sprite;

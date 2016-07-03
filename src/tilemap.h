@@ -3,6 +3,7 @@
 #include "Tmx.h.in"
 #include <map>
 #include "player.h"
+#include "item_manager.h"
 
 
 class TileMap
@@ -10,7 +11,7 @@ class TileMap
 public:
 	TileMap();
 
-	bool Init(const std::string& szMapPath, std::vector<Actor*>& vActorsInitalList);
+	bool Init(const std::string& szMapPath, std::vector<Actor*>& vActorsInitalList, ItemManager* pItemManager);
 	void Exit();
 
 	inline Player* GetPlayer() const { return m_pPlayer; }
@@ -21,7 +22,7 @@ private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);
 	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors);
 	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, std::vector<Actor*>& vActors);
-	Actor* CreateObjectActor(const Tmx::Object* pObject);
+	Actor* CreateObjectActor(Tmx::Object* pObject);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
 	TileActor* CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer);
 
@@ -30,6 +31,8 @@ private:
 	std::vector<sf::Texture*> m_vTilesetTexture;
 	std::vector<Actor*> m_vActors;
 	std::vector<std::vector<Actor*>> m_vTileLayerGrid;
+	std::vector<Actor*> m_vObjectActors;
 
+	ItemManager* m_pItemManager;
 	Player* m_pPlayer;
 };

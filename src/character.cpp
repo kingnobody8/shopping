@@ -174,3 +174,15 @@ void Character::SetSkin(short skin)
 		m_skin = skin;
 	}
 }
+
+/*virtual*/ sf::IntRect Character::GetRect()
+{
+	//TODO (daniel) make sprite have actual hitbox
+
+	sf::IntRect rect = SpriteActor::GetRect();
+	rect.left += 8;
+	rect.top += 16;
+	rect.width -= 16;
+	rect.height -= 16;
+	return rect;
+}

@@ -26,6 +26,9 @@ public:
 	void Move(int x, int y, float dt);
 	void SetSkin(short skin);
 
+	virtual sf::IntRect GetRect();
+
+
 private:
 	short m_frame;
 	short m_totalFrames;
