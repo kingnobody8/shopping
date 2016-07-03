@@ -193,36 +193,36 @@ int main(int argc, char** argv)
 			{
 				if (collides[i]->GetType() == "TileActor")
 				{
-					TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
-					sf::IntRect tileRect = pTileActor->GetRect();
-					sf::IntRect manRect = man->GetRect();
-					sf::IntRect intersect;
-					tileRect.intersects(manRect, intersect);
+				TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
+				sf::IntRect tileRect = pTileActor->GetRect();
+				sf::IntRect manRect = man->GetRect();
+				sf::IntRect intersect;
+				tileRect.intersects(manRect, intersect);
 
-					int multi = 1;
-					if (intersect.width > intersect.height)
+				int multi = 1;
+				if (intersect.width > intersect.height)
+				{
+					intersect.width = 0;
+					if (manRect.top > tileRect.top)
 					{
-						intersect.width = 0;
-						if (manRect.top > tileRect.top)
-						{
-							multi = -1;
-						}
+						multi = -1;
 					}
-					else
-					{
-						intersect.height = 0;
-						if (manRect.left > tileRect.left)
-						{
-							multi = -1;
-						}
-					}
-
-					sf::Vector2f diff(intersect.width, intersect.height);
-					diff.x *= multi;
-					diff.y *= multi;
-
-					man->SetPosition(man->GetPosition() - diff);
 				}
+				else
+				{
+					intersect.height = 0;
+					if (manRect.left > tileRect.left)
+					{
+						multi = -1;
+					}
+				}
+
+				sf::Vector2f diff(intersect.width, intersect.height);
+				diff.x *= multi;
+				diff.y *= multi;
+
+				man->SetPosition(man->GetPosition() - diff);
+			}
 				else if (collides[i]->GetType() == "ItemActor")
 				{
 					ItemActor* pItemActor = static_cast<ItemActor*>(collides[i]);
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
 					{
 						pItemActor->PurchaseItem(&customer);
 					}
-				}
+		}
 			}
 		}
 
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 			// Round to nearest int to avoid artifacting with half pixels in tilemap
 			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
 			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
-
+			
 			view.setCenter(x, y);
 		}
 

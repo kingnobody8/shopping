@@ -48,8 +48,8 @@ bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors, I
 		switch (pLayer->GetLayerType())
 		{
 		case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:	SetupImageLayer(static_cast<Tmx::ImageLayer*>(pLayer));	break;
-		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), vActors); break;
-		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i, vActors); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer)); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i); break;
 		}
 	}
 
@@ -145,7 +145,7 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 {
 }
 
-void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors)
+void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer)
 {
 	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
 	for (size_t i = 0; i < vObject.size(); ++i)
@@ -156,11 +156,11 @@ void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor
 		{
 			vActors.push_back(pActor);
 			//m_vObjectActors.push_back(pActor);
-		}
 	}
 }
+}
 
-void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, std::vector<Actor*>& vActors)
+void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 {
 	int width = pLayer->GetWidth();
 	int height = pLayer->GetHeight();
@@ -176,7 +176,6 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, s
 			if (pLayer->GetTileTilesetIndex(x, y) != -1) //TODO (daniel) for now all tiles are default tiles, they only render
 			{
 				TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
-				vActors.push_back(pTileActor);
 				m_vTileLayerGrid[layerId][index] = pTileActor;
 			}
 		}
@@ -189,7 +188,7 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 	if (type == "Spawn")
 	{
 		assert(m_pPlayer == nullptr);
-		m_pPlayer = new Player();
+		m_pPlayer = CreateActor<Player>();
 		sf::IntRect rect = m_pPlayer->GetRect();
 		m_pPlayer->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
 		return m_pPlayer;
@@ -229,7 +228,7 @@ TileActor* TileMap::CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileL
 	sf::IntRect rect = CreateTileTextureRect(tileId, tilesetId);
 
 	sf::Texture* pTexture = m_vTilesetTexture[tilesetId];
-	TileActor* pTileActor = new TileActor();
+	TileActor* pTileActor = CreateActor<TileActor>();
 	pTileActor->SetTexture(pTexture);
 	pTileActor->SetTextureRect(rect);
 	pTileActor->SetPosition((float)x * m_pMap->GetTileWidth(), (float)y * m_pMap->GetTileHeight());
