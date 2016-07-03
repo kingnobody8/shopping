@@ -13,6 +13,7 @@
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
+sf::RectangleShape g_debugTextBackground;
 std::vector<Actor*> g_actors;
 
 void RegisterActor(Actor* actor)
@@ -85,6 +86,7 @@ int main(int argc, char** argv)
 
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
+	g_debugTextBackground.setFillColor(sf::Color::Black);
 
 	Player* man = tMap.GetPlayer();// CreateActor<Player>();
 
@@ -239,7 +241,11 @@ int main(int argc, char** argv)
 
 		if (bSet)
 		{
-			view.setCenter(camMoveRect.left + camMoveRect.width / 2.0f, camMoveRect.top + camMoveRect.height / 2.0f);
+			// Round to nearest int to avoid artifacting with half pixels in tilemap
+			float x = (int) (camMoveRect.left + camMoveRect.width / 2.0f);
+			float y = (int) (camMoveRect.top + camMoveRect.height / 2.0f);
+			
+			view.setCenter(x, y);
 		}
 
 
@@ -284,6 +290,7 @@ int main(int argc, char** argv)
 
 		// Debug text
 		window.setView(window.getDefaultView());
+		window.draw(g_debugTextBackground);
 		window.draw(g_debugText);
 
 		// Display window
