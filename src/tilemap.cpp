@@ -1,16 +1,20 @@
 #include "tilemap.h"
 #include "gfx_util.h"
+#include "player.h"
+#include <assert.h>
 
 
 TileMap::TileMap()
 	: m_pMap(nullptr)
+	, m_pPlayer(nullptr)
 {
-	
+
 }
 
 
 bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors)
 {
+	//load map
 	m_pMap = new Tmx::Map();
 	m_pMap->ParseFile(szMapPath);
 	if (m_pMap->HasError())
@@ -20,6 +24,7 @@ bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors)
 		return false;
 	}
 
+	//create tileset textures
 	std::vector<Tmx::Tileset*> vTileset = m_pMap->GetTilesets();
 	m_vTilesetTexture.resize(vTileset.size());
 	for (size_t i = 0; i < vTileset.size(); ++i)
@@ -33,53 +38,19 @@ bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors)
 		m_vTilesetTexture[i] = pTexture;
 	}
 
-	//TODO (daniel) come back here when we get object layers
-	const std::vector<Tmx::TileLayer*>& vTileLayer = m_pMap->GetTileLayers();
-	m_vLayerGrid.resize(vTileLayer.size());
-	for (size_t i = 0; i < vTileLayer.size(); ++i)
+	//create actors for all layers
+	const std::vector<Tmx::Layer*>& vLayer = m_pMap->GetLayers();
+	m_vTileLayerGrid.resize(vLayer.size());
+	for (size_t i = 0; i < vLayer.size(); ++i)
 	{
-		Tmx::TileLayer* pTileLayer = vTileLayer[i];
-		int width = pTileLayer->GetWidth();
-		int height = pTileLayer->GetHeight();
-
-		m_vLayerGrid[i].resize(width * height);
-		for (int x = 0; x < width; ++x)
+		Tmx::Layer* pLayer = vLayer[i];
+		switch (pLayer->GetLayerType())
 		{
-			for (int y = 0; y < height; ++y)
-			{
-				int index = y * width + x;
-				m_vLayerGrid[i][index] = nullptr;
-
-				if (pTileLayer->GetTileTilesetIndex(x, y) != -1)
-				{
-					int tileId = pTileLayer->GetTileId(x, y);
-					int tileGid = pTileLayer->GetTileGid(x, y);
-					int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
-
-					auto pTileset = m_pMap->GetTileset(tilesetId);
-
-					int columns = pTileset->GetImage()->GetWidth() / pTileset->GetTileWidth();
-					int rows = pTileset->GetImage()->GetHeight() / pTileset->GetTileHeight();
-
-					sf::IntRect rect;
-					rect.width = m_pMap->GetTileWidth();
-					rect.height = m_pMap->GetTileHeight();
-					rect.left = tileId % columns * pTileset->GetTileWidth();
-					rect.top = tileId / columns * pTileset->GetTileWidth();
-
-					sf::Texture* pTexture = m_vTilesetTexture[tilesetId];
-					TileActor* pTileActor = new TileActor();
-					pTileActor->SetTexture(pTexture);
-					pTileActor->SetTextureRect(rect);
-					pTileActor->SetPosition(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight());
-
-					vActors.push_back(pTileActor);
-					m_vLayerGrid[i][index] = pTileActor;
-				}
-			}
+		case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:	SetupImageLayer(static_cast<Tmx::ImageLayer*>(pLayer));	break;
+		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), vActors); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i, vActors); break;
 		}
 	}
-
 
 	return true;
 }
@@ -142,9 +113,9 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 					{
 						Tmx::Object* pObject = vObjects[i];
 						sf::IntRect collisionRect(x * pTileset->GetTileWidth(), y * pTileset->GetTileHeight(), width, height);
-						if(collisionRect.intersects(rect))
+						if (collisionRect.intersects(rect))
 						{
-							Actor* pActor = m_vLayerGrid[ilayer][index];
+							Actor* pActor = m_vTileLayerGrid[ilayer][index];
 							ret.push_back(pActor);
 						}
 					}
@@ -153,17 +124,91 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 		}
 	}
 
-	if (!ret.empty())
-	{
-		int x = 0;
-		x++;
-	}
-
 	return ret;
 }
 
 
-//void TileActor* TileMap::FillOutDefaultTile(TileActor* pTileActor)
-//{
-//
-//}
+void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer) 
+{
+}
+
+void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors)
+{
+	const std::vector<Tmx::Object*> vObject = pLayer->GetObjects();
+	for (size_t i = 0; i < vObject.size(); ++i)
+	{
+		Tmx::Object* pObject = vObject[i];
+		Actor* pActor = CreateObjectActor(pObject);
+		vActors.push_back(pActor);
+	}
+}
+
+void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, std::vector<Actor*>& vActors)
+{
+	int width = pLayer->GetWidth();
+	int height = pLayer->GetHeight();
+
+	m_vTileLayerGrid[layerId].resize(width * height);
+	for (int x = 0; x < width; ++x)
+	{
+		for (int y = 0; y < height; ++y)
+		{
+			int index = y * width + x;
+			m_vTileLayerGrid[layerId][index] = nullptr;
+
+			if (pLayer->GetTileTilesetIndex(x, y) != -1) //TODO (daniel) for now all tiles are default tiles, they only render
+			{
+				TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
+				vActors.push_back(pTileActor);
+				m_vTileLayerGrid[layerId][index] = pTileActor;
+			}
+		}
+	}
+}
+
+Actor* TileMap::CreateObjectActor(const Tmx::Object* pObject)
+{
+	std::string type = pObject->GetType();
+	if (type == "Spawn")
+	{
+		assert(m_pPlayer == nullptr);
+		m_pPlayer = new Player();
+		sf::IntRect rect = m_pPlayer->GetRect();
+		m_pPlayer->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+		return m_pPlayer;
+	}
+
+	return nullptr;
+}
+
+const sf::IntRect TileMap::CreateTileTextureRect(int tileId, int tilesetId)
+{
+	const Tmx::Tileset* pTileset = m_pMap->GetTileset(tilesetId);
+
+	int columns = pTileset->GetImage()->GetWidth() / pTileset->GetTileWidth();
+	int rows = pTileset->GetImage()->GetHeight() / pTileset->GetTileHeight();
+
+	sf::IntRect rect;
+	rect.width = pTileset->GetTileWidth();
+	rect.height = pTileset->GetTileHeight();
+	rect.left = tileId % columns * pTileset->GetTileWidth();
+	rect.top = tileId / columns * pTileset->GetTileWidth();
+
+	return rect;
+}
+
+TileActor* TileMap::CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer)
+{
+	int tileId = pTileLayer->GetTileId(x, y);
+	int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
+
+	sf::IntRect rect = CreateTileTextureRect(tileId, tilesetId);
+
+	sf::Texture* pTexture = m_vTilesetTexture[tilesetId];
+	TileActor* pTileActor = new TileActor();
+	pTileActor->SetTexture(pTexture);
+	pTileActor->SetTextureRect(rect);
+	pTileActor->SetPosition((float)x * m_pMap->GetTileWidth(), (float)y * m_pMap->GetTileHeight());
+
+	return pTileActor;
+}
