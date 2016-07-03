@@ -182,6 +182,7 @@
     <ClCompile Include="..\..\lib\zlib\uncompr.c" />
     <ClCompile Include="..\..\lib\zlib\zutil.c" />
     <ClCompile Include="..\..\src\box_actor.cpp" />
+    <ClCompile Include="..\..\src\character.cpp" />
     <ClCompile Include="..\..\src\customer.cpp" />
     <ClCompile Include="..\..\src\debug_text.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="..\..\lib\zlib\zutil.h" />
     <ClInclude Include="..\..\src\actor.h" />
     <ClInclude Include="..\..\src\box_actor.h" />
+    <ClInclude Include="..\..\src\character.h" />
     <ClInclude Include="..\..\src\customer.h" />
     <ClInclude Include="..\..\src\debug_text.h" />
     <ClInclude Include="..\..\src\event.h" />
