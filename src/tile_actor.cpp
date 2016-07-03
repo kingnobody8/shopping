@@ -32,7 +32,7 @@ void TileActor::SetTextureRect(const sf::IntRect& rect)
 
 void TileActor::SetPosition(float x, float y)
 {
-	m_sprite.setPosition(x, y);
+	m_sprite.setPosition((int)x, (int)y);
 }
 
 sf::IntRect TileActor::GetRect() const
