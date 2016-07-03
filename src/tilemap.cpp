@@ -131,6 +131,7 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 
 void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors)
 {
+	return;
 	const std::vector<Tmx::Object*> vObject = pLayer->GetObjects();
 	for (size_t i = 0; i < vObject.size(); ++i)
 	{
