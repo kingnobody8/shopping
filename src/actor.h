@@ -18,9 +18,14 @@ inline TActor* CreateActor()
 class Actor
 {
 public:
-	Actor() {}
+	Actor() : m_szType("Actor") {}
 	virtual ~Actor() {}
 
 	virtual void Update(float dt) {}
 	virtual void Draw(sf::RenderWindow& window) {}
+
+	const std::string& GetType() { return m_szType; }
+
+protected:
+	std::string m_szType;
 };

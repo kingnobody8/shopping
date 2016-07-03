@@ -1,4 +1,5 @@
 #include "item.h"
+#include <algorithm>
 
 Item::Item()
 	: m_eAdj(EA_INVALID)
@@ -48,4 +49,29 @@ bool Item::IsValid() const
 	case EType::ET_COUNT:		return "ET_COUNT";
 	}
 	return "";
+}
+
+/*STATIC*/ const Item::EAdjective Item::GetAdjFromString(std::string szAdj)
+{
+	std::transform(szAdj.begin(), szAdj.end(), szAdj.begin(), ::toupper);
+
+	if (szAdj == "BLUE") return EAdjective::EA_BLUE;
+	if (szAdj == "RED") return EAdjective::EA_RED;
+	if (szAdj == "GREEN") return EAdjective::EA_GREEN;
+	if (szAdj == "WHITE") return EAdjective::EA_WHITE;
+
+	return EAdjective::EA_INVALID;
+}
+
+/*STATIC*/ const Item::EType Item::GetTypeFromString(std::string szType)
+{
+	std::transform(szType.begin(), szType.end(), szType.begin(), ::toupper);
+
+	if (szType == "MILK") return EType::ET_MILK;
+	if (szType == "EGGS") return EType::ET_EGGS;
+	if (szType == "MEAT") return EType::ET_MEAT;
+	if (szType == "SODA") return EType::ET_SODA;
+	if (szType == "CANDY") return EType::ET_CANDY;
+
+	return EType::ET_INVALID;
 }

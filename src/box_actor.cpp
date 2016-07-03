@@ -2,6 +2,8 @@
 
 BoxActor::BoxActor()
 {
+	m_szType = "BoxActor";
+
 	sf::Vector2f size(50, 50);
 	m_shape.setSize(size - sf::Vector2f(3, 3));
 	m_shape.setOutlineThickness(3);

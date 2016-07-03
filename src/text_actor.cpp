@@ -2,6 +2,7 @@
 
 TextActor::TextActor(const sf::Font& font)
 {
+	m_szType = "TextActor";
 	m_text.setFont(font);
 }
 

@@ -2,6 +2,7 @@
 #include "character_controller.h"
 #include "gfx_util.h"
 #include "tilemap.h"
+#include "event.h"
 
 static const int FRAME_WIDTH = 32;
 static const int FRAME_HEIGHT = 32;
@@ -262,10 +263,34 @@ bool Character::ValidatePosition(float x, float y)
 			Actor* tileActor = map.GetTileActorAt(ix, iy, 1);
 			if (tileActor)
 			{
-				posValid = false;
+				if (tileActor->GetType() == "TileActor")
+				{
+					posValid = false;
+				}
+				else if (tileActor->GetType() == "ItemActor")
+				{
+					ItemActor* pItemActor = static_cast<ItemActor*>(tileActor);
+
+					if (isActionReleased)
+					{
+						FireEvent("PurchaseItem", pItemActor);
+					}
+				}
 			}
 		}
 	}
 
 	return posValid;
+}
+
+/*virtual*/ sf::IntRect Character::GetRect()
+{
+	//TODO (daniel) make sprite have actual hitbox
+
+	sf::IntRect rect = SpriteActor::GetRect();
+	rect.left += 8;
+	rect.top += 16;
+	rect.width -= 16;
+	rect.height -= 16;
+	return rect;
 }

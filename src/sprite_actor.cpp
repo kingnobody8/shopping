@@ -1,7 +1,8 @@
 #include "sprite_actor.h"
 
 SpriteActor::SpriteActor()
-{	
+{
+	m_szType = "SpriteActor";
 }
 
 SpriteActor::~SpriteActor()

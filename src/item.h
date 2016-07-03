@@ -8,6 +8,8 @@ public:
 	enum EType { ET_INVALID = -1, ET_MILK, ET_EGGS, ET_MEAT, ET_SODA, ET_CANDY, ET_COUNT };
 	static const std::string GetAdjString(const EAdjective& eAdj);
 	static const std::string GetTypeString(const EType& eAdj);
+	static const EAdjective GetAdjFromString(std::string szAdj);
+	static const EType GetTypeFromString(std::string szType);
 
 public:
 	Item();

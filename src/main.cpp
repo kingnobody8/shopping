@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include "event.h"
 #include "debug_text.h"
 #include "box_actor.h"
 #include "player.h"
@@ -9,6 +10,8 @@
 #include "customer.h"
 #include "Tmx.h.in"
 #include "tilemap.h"
+#include "item_manager.h"
+#include "item_actor.h"
 //#include <vld.h>
 
 sf::Font* g_defaultFont;
@@ -16,6 +19,8 @@ sf::Text g_debugText;
 sf::RectangleShape g_debugTextBackground;
 std::vector<Actor*> g_actors;
 TileMap g_map;
+Customer* g_customer;
+bool isActionReleased = false;
 
 const TileMap& GetCurrentMap()
 {
@@ -57,6 +62,13 @@ void AddItemAttempt(Customer* c, Item* i)
 	printf("\n\n");
 }
 
+void PurchaseItemTest(void* clientData)
+{
+	EVENT_AS(ItemActor, itemActor);
+
+	itemActor.PurchaseItem(g_customer);
+}
+
 int main(int argc, char** argv)
 {
 	Character::InitializeCharacterFrameMap();
@@ -73,7 +85,9 @@ int main(int argc, char** argv)
 	gc.AddItem(white_meat);
 	gc.AddItem(red_candy);
 
-	Customer customer(gc, 1000);
+	g_customer = new Customer(gc, 1000);
+
+	RegisterEvent("PurchaseItem", PurchaseItemTest);
 
 	sf::Music music;
 	if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
@@ -85,7 +99,8 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
-	g_map.Init("assets/test_shop.tmx");
+	ItemManager itemManager;
+	g_map.Init("assets/test_shop.tmx", &itemManager);
 
 	g_defaultFont = new sf::Font;
 
@@ -112,6 +127,8 @@ int main(int argc, char** argv)
 	{
 		float dt = clock.restart().asSeconds();
 
+		
+
 		// Poll events
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -126,25 +143,29 @@ int main(int argc, char** argv)
 				window.close();
 			}
 
+			if(event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
+			{
+				isActionReleased = true;
+			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num1)
 			{
-				AddItemAttempt(&customer, &blue_milk);
+				AddItemAttempt(g_customer, &blue_milk);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num2)
 			{
-				AddItemAttempt(&customer, &green_eggs);
+				AddItemAttempt(g_customer, &green_eggs);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num3)
 			{
-				AddItemAttempt(&customer, &white_meat);
+				AddItemAttempt(g_customer, &white_meat);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num4)
 			{
-				AddItemAttempt(&customer, &red_candy);
+				AddItemAttempt(g_customer, &red_candy);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num5)
 			{
-				AddItemAttempt(&customer, &blue_eggs);
+				AddItemAttempt(g_customer, &blue_eggs);
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R)
 			{
@@ -154,9 +175,10 @@ int main(int argc, char** argv)
 				gc.AddItem(white_meat);
 				gc.AddItem(red_candy);
 
-				customer =  Customer(gc, 1000);
+				delete g_customer;
+				g_customer = new Customer(gc, 1000);
 
-				PrintCustomer(&customer);
+				PrintCustomer(g_customer);
 			}
 
 			// Skin swap test
@@ -200,8 +222,8 @@ int main(int argc, char** argv)
 		if (bSet)
 		{
 			// Round to nearest int to avoid artifacting with half pixels in tilemap
-			float x = (int) (camMoveRect.left + camMoveRect.width / 2.0f);
-			float y = (int) (camMoveRect.top + camMoveRect.height / 2.0f);
+			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
+			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
 			
 			view.setCenter(x, y);
 		}
@@ -258,6 +280,7 @@ int main(int argc, char** argv)
 	}
 
 	delete g_defaultFont;
+	delete g_customer;
 
 	return 0;
 }

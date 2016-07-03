@@ -8,12 +8,13 @@ TileMap::TileMap()
 	: m_pMap(nullptr)
 	, m_pPlayer(nullptr)
 {
-
 }
 
 
-bool TileMap::Init(const std::string& szMapPath)
+bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
 {
+	m_pItemManager = m_pItemManager;
+
 	//load map
 	m_pMap = new Tmx::Map();
 	m_pMap->ParseFile(szMapPath);
@@ -124,6 +125,18 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 		}
 	}
 
+	for (size_t i = 0; i < m_vObjectActors.size(); ++i)
+	{
+		//TODO (daniel) for now assume all objects are items
+		ItemActor* pItemActor = static_cast<ItemActor*>(m_vObjectActors[i]);
+
+		sf::IntRect collisionRect = pItemActor->GetRect();
+		if (collisionRect.intersects(rect))
+		{
+			ret.push_back(pItemActor);
+		}
+	}
+
 	return ret;
 }
 
@@ -156,7 +169,7 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 
 void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer)
 {
-	const std::vector<Tmx::Object*> vObject = pLayer->GetObjects();
+	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
 	for (size_t i = 0; i < vObject.size(); ++i)
 	{
 		Tmx::Object* pObject = vObject[i];
@@ -186,7 +199,7 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 	}
 }
 
-Actor* TileMap::CreateObjectActor(const Tmx::Object* pObject)
+Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 {
 	std::string type = pObject->GetType();
 	if (type == "Spawn")
@@ -196,6 +209,13 @@ Actor* TileMap::CreateObjectActor(const Tmx::Object* pObject)
 		sf::IntRect rect = m_pPlayer->GetRect();
 		m_pPlayer->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
 		return m_pPlayer;
+	}
+	else if (type == "ItemCollider")
+	{
+		ItemActor* itemActor = new ItemActor();
+		itemActor->Init(pObject);
+		m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
+		return itemActor;
 	}
 
 	return nullptr;
@@ -228,7 +248,7 @@ TileActor* TileMap::CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileL
 	TileActor* pTileActor = CreateActor<TileActor>();
 	pTileActor->SetTexture(pTexture);
 	pTileActor->SetTextureRect(rect);
-	pTileActor->SetPosition((float)x * m_pMap->GetTileWidth(), (float)y * m_pMap->GetTileHeight());
+	pTileActor->SetPosition(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight());
 
 	return pTileActor;
 }

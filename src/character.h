@@ -2,6 +2,8 @@
 
 #include "sprite_actor.h"
 
+extern bool isActionReleased;
+
 class CharacterController;
 class Character : public SpriteActor
 {
@@ -25,6 +27,9 @@ public:
 	void SetFacing(CharacterDirection direction);
 	void Move(int x, int y, float dt);
 	void SetSkin(short skin);
+
+	virtual sf::IntRect GetRect();
+
 
 private:
 	void ApplyMotion(sf::Vector2f velocity);

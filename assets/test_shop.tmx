@@ -122,7 +122,15 @@
  </layer>
  <objectgroup name="Object Layer 1">
   <object id="1" name="PlayerSpawn" type="Spawn" x="464" y="464" width="16" height="16"/>
-  <object id="2" name="ItemCollider0" type="ItemCollider" x="404" y="356" width="8" height="8"/>
-  <object id="3" name="ItemCollider1" type="ItemCollider" x="404" y="340" width="8" height="8"/>
+  <object id="2" name="ItemCollider0" type="ItemCollider" x="404" y="356" width="8" height="8">
+   <properties>
+    <property name="item_type" value="blue_milk"/>
+   </properties>
+  </object>
+  <object id="3" name="ItemCollider1" type="ItemCollider" x="404" y="340" width="8" height="8">
+   <properties>
+    <property name="item_type" value="green_eggs"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
