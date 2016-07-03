@@ -174,6 +174,7 @@
     <ClCompile Include="..\..\src\item_actor.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -326,6 +327,7 @@
     <ClInclude Include="..\..\src\item_manager.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\button.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\lib\tmx_parser\tmxparser.pc.in">
