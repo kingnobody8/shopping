@@ -14,6 +14,8 @@ public:
 	void SetTextureRect(const sf::IntRect& rect);
 	void SetPosition(float x, float y);
 
+	sf::IntRect GetRect() const;
+
 private:
 	sf::Sprite m_sprite;
 

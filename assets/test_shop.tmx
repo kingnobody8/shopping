@@ -2,10 +2,55 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="1">
  <tileset firstgid="1" name="pokemart_tileset" tilewidth="16" tileheight="16" tilecount="1024" columns="32">
   <image source="textures/pokemart_tileset.png" trans="2e659f" width="512" height="512"/>
+  <tile id="436">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="437">
+   <objectgroup color="#ff0000" draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="440">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="468">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="469">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="472">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="500">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="501">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="504">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
  </tileset>
  <layer name="base_floor" width="32" height="32">
   <data encoding="csv">
-289,290,299,299,299,299,2,299,299,299,299,299,299,299,2,299,299,299,299,299,299,299,299,16,17,18,299,299,299,299,299,302,
+1,290,299,299,299,299,2,299,299,299,299,299,299,299,2,299,299,299,299,299,299,299,299,16,17,18,299,299,299,299,299,302,
 321,322,331,331,331,331,34,331,331,331,331,331,331,331,34,331,331,331,331,331,331,331,331,48,49,50,331,331,331,331,331,334,
 65,178,178,178,178,178,66,178,178,178,178,178,178,178,66,178,178,178,178,178,178,178,178,80,81,82,178,178,178,178,178,366,
 111,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,178,430,

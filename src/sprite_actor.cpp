@@ -145,3 +145,11 @@ void SpriteActor::Move(int x, int y, float dt)
 		SetFacing(y < 0 ? CharacterDirection::North : CharacterDirection::South);
 	}
 }
+
+sf::IntRect SpriteActor::GetRect()
+{
+	sf::IntRect rect = m_sprite.getTextureRect();
+	rect.left = m_sprite.getPosition().x;
+	rect.top = m_sprite.getPosition().y;
+	return rect;
+}

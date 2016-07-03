@@ -7,6 +7,7 @@
 #include "customer.h"
 #include "Tmx.h.in"
 #include "tilemap.h"
+//#include <vld.h>
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
@@ -142,6 +143,20 @@ int main(int argc, char** argv)
 			g_actors[i]->Update(dt);
 		}
 
+	auto collides =	tMap.PerformCollisionTest(man->GetRect());
+	if(!collides.empty())
+	{
+		for (int i = 0; i < collides.size(); ++i)
+		{
+			TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
+			sf::IntRect tileRect = pTileActor->GetRect();
+			sf::IntRect manRect = man->GetRect();
+
+			sf::Vector2f diff(tileRect.left - manRect.left, tileRect.top - manRect.top);
+			man->SetPosition(man->GetPosition() - diff);
+		}
+	}
+
 		view.setCenter(man->GetPosition());
 
 		// Clear
@@ -158,6 +173,13 @@ int main(int argc, char** argv)
 		{
 			g_actors[i]->Draw(window);
 		}
+
+		sf::Vertex verts[4];
+		verts[1].position.x = 16;
+		verts[0].color = verts[1].color = sf::Color(255, 0, 0);
+		verts[3].position.y = 16;
+		verts[2].color = verts[3].color = sf::Color(0, 255, 0);
+		window.draw(verts, 4, sf::PrimitiveType::Lines);
 
 		// Display window
 		window.display();
