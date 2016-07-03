@@ -269,12 +269,7 @@ bool Character::ValidatePosition(float x, float y)
 				}
 				else if (tileActor->GetType() == "ItemActor")
 				{
-					ItemActor* pItemActor = static_cast<ItemActor*>(tileActor);
-
-					if (isActionReleased)
-					{
-						FireEvent("PurchaseItem", pItemActor);
-					}
+					pItemActor = static_cast<ItemActor*>(tileActor);
 				}
 			}
 		}

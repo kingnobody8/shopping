@@ -21,6 +21,7 @@ std::vector<Actor*> g_actors;
 TileMap g_map;
 Customer* g_customer;
 bool isActionReleased = false;
+ItemActor* pItemActor = nullptr;
 
 const TileMap& GetCurrentMap()
 {
@@ -41,9 +42,7 @@ void DestroyActor(Actor* actor)
 void PrintCustomer(Customer* c)
 {
 	printf("Customer Wallet: %d\n", c->GetMunny());
-	printf("List:\n");
 	c->PrintGroceryList();
-	printf("Inventory:\n");
 	c->PrintInventory();
 }
 
@@ -67,6 +66,7 @@ void PurchaseItemTest(void* clientData)
 	EVENT_AS(ItemActor, itemActor);
 
 	itemActor.PurchaseItem(g_customer);
+	printf("Got it\n");
 }
 
 int main(int argc, char** argv)
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
 	{
 		float dt = clock.restart().asSeconds();
 
-		
+
 
 		// Poll events
 		sf::Event event;
@@ -143,9 +143,13 @@ int main(int argc, char** argv)
 				window.close();
 			}
 
-			if(event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
 			{
 				isActionReleased = true;
+				if (pItemActor)
+				{
+					FireEvent("PurchaseItem", pItemActor);
+				}
 			}
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num1)
 			{
@@ -268,7 +272,9 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
-	//	DebugPrintf("Munny: %d", customer.GetMunny());
+		DebugPrintf("Munny: %d", g_customer->GetMunny());
+		//if(showItem)
+		//	DebugPrintf("%s: %d", itemName.c_str(), cost);
 
 		// Debug text
 		window.setView(window.getDefaultView());

@@ -2,7 +2,7 @@
 
 #include "sprite_actor.h"
 
-extern bool isActionReleased;
+extern class ItemActor* pItemActor;
 
 class CharacterController;
 class Character : public SpriteActor
