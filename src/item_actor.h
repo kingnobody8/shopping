@@ -17,6 +17,8 @@ public:
 
 	void PurchaseItem(Customer* pCustomer);
 
+	const Item& GetItem() { return *m_pItem; }
+
 private:
 	Tmx::Object* m_pObject;
 	Item::EAdjective m_eAdj;

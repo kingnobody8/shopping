@@ -31,9 +31,7 @@ void DestroyActor(Actor* actor)
 void PrintCustomer(Customer* c)
 {
 	printf("Customer Wallet: %d\n", c->GetMunny());
-	printf("List:\n");
 	c->PrintGroceryList();
-	printf("Inventory:\n");
 	c->PrintInventory();
 }
 
@@ -134,7 +132,7 @@ int main(int argc, char** argv)
 				window.close();
 			}
 
-			if(event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
 			{
 				isActionReleased = true;
 			}
@@ -186,6 +184,10 @@ int main(int argc, char** argv)
 			g_actors[i]->Update(dt);
 		}
 
+		bool showItem = false;
+		std::string itemName = "";
+		int cost = -1;
+
 		auto collides = tMap.PerformCollisionTest(man->GetRect());
 		if (!collides.empty())
 		{
@@ -193,36 +195,36 @@ int main(int argc, char** argv)
 			{
 				if (collides[i]->GetType() == "TileActor")
 				{
-				TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
-				sf::IntRect tileRect = pTileActor->GetRect();
-				sf::IntRect manRect = man->GetRect();
-				sf::IntRect intersect;
-				tileRect.intersects(manRect, intersect);
+					TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
+					sf::IntRect tileRect = pTileActor->GetRect();
+					sf::IntRect manRect = man->GetRect();
+					sf::IntRect intersect;
+					tileRect.intersects(manRect, intersect);
 
-				int multi = 1;
-				if (intersect.width > intersect.height)
-				{
-					intersect.width = 0;
-					if (manRect.top > tileRect.top)
+					int multi = 1;
+					if (intersect.width > intersect.height)
 					{
-						multi = -1;
+						intersect.width = 0;
+						if (manRect.top > tileRect.top)
+						{
+							multi = -1;
+						}
 					}
-				}
-				else
-				{
-					intersect.height = 0;
-					if (manRect.left > tileRect.left)
+					else
 					{
-						multi = -1;
+						intersect.height = 0;
+						if (manRect.left > tileRect.left)
+						{
+							multi = -1;
+						}
 					}
+
+					sf::Vector2f diff(intersect.width, intersect.height);
+					diff.x *= multi;
+					diff.y *= multi;
+
+					man->SetPosition(man->GetPosition() - diff);
 				}
-
-				sf::Vector2f diff(intersect.width, intersect.height);
-				diff.x *= multi;
-				diff.y *= multi;
-
-				man->SetPosition(man->GetPosition() - diff);
-			}
 				else if (collides[i]->GetType() == "ItemActor")
 				{
 					ItemActor* pItemActor = static_cast<ItemActor*>(collides[i]);
@@ -231,7 +233,13 @@ int main(int argc, char** argv)
 					{
 						pItemActor->PurchaseItem(&customer);
 					}
-		}
+					else
+					{
+						showItem = true;
+						itemName = pItemActor->GetItem().GetItemName();
+						cost = pItemActor->GetItem().GetCost();
+					}
+				}
 			}
 		}
 
@@ -264,7 +272,7 @@ int main(int argc, char** argv)
 			// Round to nearest int to avoid artifacting with half pixels in tilemap
 			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
 			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
-			
+
 			view.setCenter(x, y);
 		}
 
@@ -309,6 +317,8 @@ int main(int argc, char** argv)
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
 		DebugPrintf("Munny: %d", customer.GetMunny());
+		if(showItem)
+			DebugPrintf("%s: %d", itemName.c_str(), cost);
 
 		// Debug text
 		window.setView(window.getDefaultView());

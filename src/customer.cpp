@@ -31,13 +31,17 @@ void Customer::AddItem(const Item& item)
 
 void Customer::PrintGroceryList() const
 {
+	printf("Grocery List:\n");
 	m_GroceryList.PrintList();
+	printf("\n");
 }
 
 void Customer::PrintInventory() const
 {
+	printf("Inventory:\n");
 	for (size_t i = 0; i < m_vInventory.size(); ++i)
 	{
 		printf("%d: %s\n", i, m_vInventory[i].GetItemName().c_str());
 	}
+	printf("\n");
 }
