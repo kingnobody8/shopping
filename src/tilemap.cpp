@@ -133,10 +133,6 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 					int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
 
 					auto pTileset = m_pMap->GetTileset(tilesetId);
-					int columns = pTileset->GetImage()->GetWidth() / pTileset->GetTileWidth();
-					int rows = pTileset->GetImage()->GetHeight() / pTileset->GetTileHeight();
-					//int tilesetIndex = 
-					//const Tmx::MapTile& pMapTile = pTileLayer->GetTile(x, y);
 					const Tmx::Tile* pTile = pTileset->GetTile(tileId);
 					if (pTile == nullptr)
 						continue;
@@ -145,7 +141,7 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 					for (int i = 0; i < vObjects.size(); ++i)
 					{
 						Tmx::Object* pObject = vObjects[i];
-						sf::IntRect collisionRect(x * height, y * height, width, height);
+						sf::IntRect collisionRect(x * pTileset->GetTileWidth(), y * pTileset->GetTileHeight(), width, height);
 						if(collisionRect.intersects(rect))
 						{
 							Actor* pActor = m_vLayerGrid[ilayer][index];

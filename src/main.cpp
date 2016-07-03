@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
 	{
 		music.setLoop(true);
-		music.play();
+		//music.play();
 	}
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
@@ -159,8 +159,31 @@ int main(int argc, char** argv)
 			TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
 			sf::IntRect tileRect = pTileActor->GetRect();
 			sf::IntRect manRect = man->GetRect();
+			sf::IntRect intersect;
+			tileRect.intersects(manRect, intersect);
 
-			sf::Vector2f diff(tileRect.left - manRect.left, tileRect.top - manRect.top);
+			int multi = 1;
+			if (intersect.width > intersect.height)
+			{
+				intersect.width = 0;
+				if (manRect.top > tileRect.top)
+				{
+					multi = -1;
+				}
+			}
+			else
+			{
+				intersect.height = 0;
+				if (manRect.left > tileRect.left)
+				{
+					multi = -1;
+				}
+			}
+
+			sf::Vector2f diff(intersect.width, intersect.height);
+			diff.x *= multi;
+			diff.y *= multi;
+
 			man->SetPosition(man->GetPosition() - diff);
 		}
 	}
