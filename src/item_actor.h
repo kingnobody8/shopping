@@ -7,8 +7,7 @@ class ItemActor : public Actor
 {
 public:
 	ItemActor();
-	virtual ~ItemActor();
-
+	
 	void Init(Tmx::Object* pObject);
 
 	virtual void Update(float dt);
@@ -20,4 +19,8 @@ public:
 
 private:
 	Tmx::Object* m_pObject;
+	Item::EAdjective m_eAdj;
+	Item::EType	m_eType;
+
+	Item* m_pItem;
 };

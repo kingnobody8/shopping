@@ -7,7 +7,6 @@ TileActor::TileActor()
 	m_szType = "TileActor";
 }
 
-
 TileActor::~TileActor()
 {}
 

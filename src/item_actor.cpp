@@ -6,13 +6,13 @@
 #include <iostream> 
 
 ItemActor::ItemActor()
+	: m_pObject(nullptr)
+	, m_eAdj(Item::EAdjective::EA_INVALID)
+	, m_eType(Item::EType::ET_INVALID)
+	, m_pItem(nullptr)
 {
 	m_szType = "ItemActor";
 }
-
-
-ItemActor::~ItemActor()
-{}
 
 void ItemActor::Update(float dt)
 {
@@ -37,7 +37,15 @@ void ItemActor::Draw(sf::RenderWindow& window)
 
 	for (size_t i = 0; i < verts.getVertexCount(); ++i)
 	{
-		verts[i].color = sf::Color::Green;
+		sf::Color clr = sf::Color::Magenta;
+		switch (m_eAdj)
+		{
+		case Item::EAdjective::EA_BLUE: clr = sf::Color::Blue; break;
+		case Item::EAdjective::EA_GREEN: clr = sf::Color::Green; break;
+		case Item::EAdjective::EA_RED: clr = sf::Color::Red; break;
+		case Item::EAdjective::EA_WHITE: clr = sf::Color::White; break;
+		}
+		verts[i].color = clr;
 	}
 
 	window.draw(&verts[0], verts.getVertexCount(), sf::PrimitiveType::LinesStrip);
@@ -46,6 +54,21 @@ void ItemActor::Draw(sf::RenderWindow& window)
 void ItemActor::Init(Tmx::Object* pObject)
 {
 	m_pObject = pObject;
+
+	const Tmx::PropertySet& propSet = m_pObject->GetProperties();
+	assert(propSet.HasProperty("item_type"));
+
+	std::string szItemType = propSet.GetStringProperty("item_type");
+
+	size_t index = szItemType.find_first_of("_");
+	std::string szAdj = std::string(szItemType.begin(), szItemType.begin() + index);
+	std::string szType = std::string(szItemType.begin() + index + 1, szItemType.end());
+
+	m_eAdj = Item::GetAdjFromString(szAdj);
+	m_eType = Item::GetTypeFromString(szType);
+	assert(m_eAdj != Item::EAdjective::EA_INVALID && m_eType != Item::EType::ET_INVALID);
+
+	m_pItem = new Item(m_eAdj, m_eType, 300);
 }
 
 sf::IntRect ItemActor::GetRect() const
@@ -60,23 +83,13 @@ sf::IntRect ItemActor::GetRect() const
 
 void ItemActor::PurchaseItem(Customer* pCustomer)
 {
-	const Tmx::PropertySet& propSet = m_pObject->GetProperties();
-	assert(propSet.HasProperty("item_type"));
 
-	std::string s = propSet.GetStringProperty("item_type");
-	std::stringstream ss(s);
-	std::istream_iterator<std::string> begin(ss);
-	std::istream_iterator<std::string> end;
-	std::vector<std::string> vstrings(begin, end);
-	std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
-	assert(vstrings.size() == 2);
-
-	std::string szAdj = vstrings[0];
-	std::string szType = vstrings[1];
-
-	Item::EAdjective eAdj = Item::GetAdjFromString(szAdj);
-	Item::EType eType = Item::GetTypeFromString(szType);
-	assert(eAdj != Item::EAdjective::EA_INVALID && eType != Item::EType::ET_INVALID);
+	if (pCustomer->CanAddItem(*m_pItem))
+	{
+		pCustomer->AddItem(*m_pItem);
+		pCustomer->PrintGroceryList();
+		pCustomer->PrintInventory();
+	}
 
 	//pCustomer->CanAddItem()
 }

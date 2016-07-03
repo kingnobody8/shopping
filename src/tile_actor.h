@@ -1,6 +1,7 @@
 #pragma once
 #include "actor.h"
 
+//TODO (daniel) make this inherit from sprite actor
 class TileActor : public Actor
 {
 public:
