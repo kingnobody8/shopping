@@ -88,16 +88,7 @@ int main(int argc, char** argv)
 	g_debugText.setFont(*g_defaultFont);
 	g_debugTextBackground.setFillColor(sf::Color::Black);
 
-	Player* man = tMap.GetPlayer();// CreateActor<Player>();
-
-	/*for (int i = 0; i < g_actors.size(); ++i)
-	{
-		if (g_actors[i]->GetType() == )
-		{
-			man = g_actors[i];
-			break;
-		}
-	}*/
+	Player* man = tMap.GetPlayer();
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
