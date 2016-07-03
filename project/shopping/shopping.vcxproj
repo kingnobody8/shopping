@@ -198,6 +198,8 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\player.cpp" />
     <ClCompile Include="..\..\src\player_controller.cpp" />
+    <ClCompile Include="..\..\src\shopper.cpp" />
+    <ClCompile Include="..\..\src\shopper_controller.cpp" />
     <ClCompile Include="..\..\src\sprite_actor.cpp" />
     <ClCompile Include="..\..\src\tilemap.cpp" />
     <ClCompile Include="..\..\src\tile_actor.cpp" />
@@ -251,6 +253,8 @@
     <ClInclude Include="..\..\src\item_manager.h" />
     <ClInclude Include="..\..\src\player.h" />
     <ClInclude Include="..\..\src\player_controller.h" />
+    <ClInclude Include="..\..\src\shopper.h" />
+    <ClInclude Include="..\..\src\shopper_controller.h" />
     <ClInclude Include="..\..\src\sprite_actor.h" />
     <ClInclude Include="..\..\src\tilemap.h" />
     <ClInclude Include="..\..\src\tile_actor.h" />

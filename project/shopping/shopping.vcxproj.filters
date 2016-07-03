@@ -175,6 +175,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\button.cpp" />
+    <ClCompile Include="..\..\src\shopper_controller.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\shopper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -328,6 +334,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\button.h" />
+    <ClInclude Include="..\..\src\shopper_controller.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shopper.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\lib\tmx_parser\tmxparser.pc.in">

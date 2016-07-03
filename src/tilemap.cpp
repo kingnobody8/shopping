@@ -1,6 +1,7 @@
 #include "tilemap.h"
 #include "gfx_util.h"
 #include "player.h"
+#include "shopper.h"
 #include <assert.h>
 
 
@@ -202,23 +203,40 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 {
 	std::string type = pObject->GetType();
+	Actor* actor = nullptr;
 	if (type == "Spawn")
 	{
-		assert(m_pPlayer == nullptr);
-		m_pPlayer = CreateActor<Player>();
-		sf::IntRect rect = m_pPlayer->GetRect();
-		m_pPlayer->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
-		return m_pPlayer;
+		const Tmx::PropertySet& props = pObject->GetProperties();
+		std::string spawnEntity = props.GetStringProperty("Entity");
+		SpriteActor* spawned = nullptr;
+
+		if (spawnEntity == "Player")
+		{
+			assert(m_pPlayer == nullptr);
+			m_pPlayer = CreateActor<Player>();
+			spawned = m_pPlayer;
+		}
+		else if (spawnEntity == "Shopper")
+		{
+			spawned = CreateActor<Shopper>();
+		}
+
+		if (spawned)
+		{
+			sf::IntRect rect = spawned->GetRect();
+			spawned->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+			actor = spawned;
+		}
 	}
 	else if (type == "ItemCollider")
 	{
 		ItemActor* itemActor = new ItemActor();
 		itemActor->Init(pObject);
 		m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
-		return itemActor;
+		actor = itemActor;
 	}
 
-	return nullptr;
+	return actor;
 }
 
 const sf::IntRect TileMap::CreateTileTextureRect(int tileId, int tilesetId)

@@ -176,6 +176,13 @@ void Character::Move(int x, int y, float dt)
 	m_velocity.x = x * m_speed * dt;
 	m_velocity.y = y * m_speed * dt;
 
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
+	{
+		m_velocity.x *= 10;
+		m_velocity.y *= 10;
+	}
+
 	if (x != 0)
 	{
 		SetFacing(x < 0 ? CharacterDirection::West : CharacterDirection::East);

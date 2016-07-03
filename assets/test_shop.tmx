@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="14">
  <tileset firstgid="1" name="pokemart_tileset" tilewidth="16" tileheight="16" tilecount="1024" columns="32">
   <image source="textures/pokemart_tileset.png" trans="2e659f" width="512" height="512"/>
   <tile id="436">
@@ -121,7 +121,11 @@
 </data>
  </layer>
  <objectgroup name="Object Layer 1">
-  <object id="1" name="PlayerSpawn" type="Spawn" x="464" y="464" width="16" height="16"/>
+  <object id="1" name="PlayerSpawn" type="Spawn" x="464" y="464" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Player"/>
+   </properties>
+  </object>
   <object id="2" name="ItemCollider0" type="ItemCollider" x="404" y="356" width="8" height="8">
    <properties>
     <property name="item_type" value="red_milk"/>
@@ -130,6 +134,51 @@
   <object id="3" name="ItemCollider1" type="ItemCollider" x="404" y="340" width="8" height="8">
    <properties>
     <property name="item_type" value="green_eggs"/>
+   </properties>
+  </object>
+  <object id="5" name="ShopperSpawn" type="Spawn" x="312.667" y="351.333" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="6" name="ShopperSpawn" type="Spawn" x="472.5" y="289.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="7" name="ShopperSpawn" type="Spawn" x="279.5" y="215.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="8" name="ShopperSpawn" type="Spawn" x="216" y="154.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="9" name="ShopperSpawn" type="Spawn" x="89" y="252.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="10" name="ShopperSpawn" type="Spawn" x="89.5" y="275" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="11" name="ShopperSpawn" type="Spawn" x="116.5" y="39" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="12" name="ShopperSpawn" type="Spawn" x="476" y="31.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
+   </properties>
+  </object>
+  <object id="13" name="ShopperSpawn" type="Spawn" x="103.5" y="393.5" width="16" height="16">
+   <properties>
+    <property name="Entity" value="Shopper"/>
    </properties>
   </object>
  </objectgroup>
