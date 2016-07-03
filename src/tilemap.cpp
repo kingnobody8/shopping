@@ -48,8 +48,8 @@ bool TileMap::Init(const std::string& szMapPath, std::vector<Actor*>& vActors, I
 		switch (pLayer->GetLayerType())
 		{
 		case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:	SetupImageLayer(static_cast<Tmx::ImageLayer*>(pLayer));	break;
-		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer)); break;
-		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), vActors); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i, vActors); break;
 		}
 	}
 
@@ -125,7 +125,7 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 		}
 	}
 
-	for (int i = 0; i < m_vObjectActors.size(); ++i)
+	for (size_t i = 0; i < m_vObjectActors.size(); ++i)
 	{
 		//TODO (daniel) for now assume all objects are items
 		ItemActor* pItemActor = static_cast<ItemActor*>(m_vObjectActors[i]);
@@ -145,7 +145,7 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 {
 }
 
-void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer)
+void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors)
 {
 	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
 	for (size_t i = 0; i < vObject.size(); ++i)
@@ -160,7 +160,7 @@ void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer)
 }
 }
 
-void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
+void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, std::vector<Actor*>& vActors)
 {
 	int width = pLayer->GetWidth();
 	int height = pLayer->GetHeight();
