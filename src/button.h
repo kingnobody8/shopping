@@ -7,6 +7,7 @@
 #include <SFML/Window.hpp>
 
 #include "event.h"
+#include "sprite_actor.h"
 
 class Button;
 void RegisterButton(Button *button);
@@ -32,7 +33,7 @@ public:
 	void SetEvent(const std::string& event, EventCallback callback);
 	void SetSpriteActor(SpriteActor *spriteActor);
 	// Fires an event/callback if a mouse button is detected
-	void CheckMousePress(const sf::Event::MouseButtonEvent& mbe) const;
+	void CheckMousePress(const sf::Vector2f mouse) const;
 
 private:
 	// sprite to use as the hitbox

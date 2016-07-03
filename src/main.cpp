@@ -216,12 +216,10 @@ int main(int argc, char** argv)
 			else if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
-				sf::Vector2f& vec = window.ConvertCoords(mbe.x, mbe.y);
-				printf("trung's mbe vec is %d, %d\n", mbe.x, mbe.y);
-				printf("trung's view vec is %d, %d\n", vec.x, vec.y);
+				sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), view);
 				for (size_t i = 0; i < g_buttons.size(); ++i)
 				{
-					g_buttons[i]->CheckMousePress(mbe);
+					g_buttons[i]->CheckMousePress(vec);
 				}
 			}
 		}
