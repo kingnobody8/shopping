@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+//#include <SFML/Ausdio.hpp>
 
 #include "event.h"
 #include "debug_text.h"
 #include "box_actor.h"
 #include "player.h"
+#include "button.h"
 #include "text_actor.h"
 #include <vector>
+//#include <functional>
 #include "customer.h"
 #include "Tmx.h.in"
 #include "tilemap.h"
@@ -27,6 +29,10 @@ const TileMap& GetCurrentMap()
 {
 	return g_map;
 }
+// We keep a separate list of buttons
+// because buttons don't necessarily need to be drawn
+// or updated. They just need to know what and when to fire
+std::vector<Button*> g_buttons;
 
 void RegisterActor(Actor* actor)
 {
@@ -37,6 +43,17 @@ void DestroyActor(Actor* actor)
 {
 	g_actors.erase(std::find(g_actors.begin(), g_actors.end(), actor));
 	delete actor;
+}
+
+void RegisterButton(Button* button)
+{
+	g_buttons.push_back(button);
+}
+
+void DestroyButton(Button* button)
+{
+	g_buttons.erase(std::find(g_buttons.begin(), g_buttons.end(), button));
+	delete button;
 }
 
 void PrintCustomer(Customer* c)
@@ -73,6 +90,7 @@ int main(int argc, char** argv)
 {
 	Character::InitializeCharacterFrameMap();
 
+
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
 	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
@@ -89,12 +107,12 @@ int main(int argc, char** argv)
 
 	RegisterEvent("PurchaseItem", PurchaseItemTest);
 
-	sf::Music music;
-	if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
-	{
-		music.setLoop(true);
-		//music.play();
-	}
+	//sf::Music music;
+	//if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
+	//{
+	//	music.setLoop(true);
+	//	//music.play();
+	//}
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
@@ -110,6 +128,9 @@ int main(int argc, char** argv)
 
 	Player* man = g_map.GetPlayer();
 
+	Button *manButton = CreateButton();
+	manButton->SetHitbox(&man->GetRect());
+	manButton->SetEvent("GOO GOO", ([](void *x) {printf("GOO GOO EVENT BODY\n"); }));
 	// Create the camera, origin at center
 	const float w = 176;	// '11' cells
 	const float h = 128; // '8' cells
@@ -192,6 +213,14 @@ int main(int argc, char** argv)
 				skin = (skin + 1) % 4;
 				man->SetSkin(skin);
 			}
+			else if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
+				for (size_t i = 0; i < g_buttons.size(); ++i)
+				{
+					g_buttons[i]->CheckMousePress(mbe);
+				}
+			}
 		}
 
 		// Update actors
@@ -228,7 +257,7 @@ int main(int argc, char** argv)
 			// Round to nearest int to avoid artifacting with half pixels in tilemap
 			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
 			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
-			
+
 			view.setCenter(x, y);
 		}
 

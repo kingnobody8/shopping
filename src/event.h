@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #define EVENT_AS(TYPE, LOCAL) TYPE& LOCAL = *static_cast<TYPE*>(clientData)
 
