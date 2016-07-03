@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	window.setActive();
 
 	TileMap tMap;
-	tMap.Init("assets/test_shop.tmx", g_actors);
+	tMap.Init("assets/test_shop.tmx");
 
 	g_defaultFont = new sf::Font;
 
@@ -288,7 +288,6 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
-		g_debugText.setColor(sf::Color::Black);
 		DebugPrintf("Munny: %d", customer.GetMunny());
 
 		// Debug text

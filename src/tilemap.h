@@ -10,7 +10,7 @@ class TileMap
 public:
 	TileMap();
 
-	bool Init(const std::string& szMapPath, std::vector<Actor*>& vActorsInitalList);
+	bool Init(const std::string& szMapPath);
 	void Exit();
 
 	inline Player* GetPlayer() const { return m_pPlayer; }
@@ -19,8 +19,8 @@ public:
 
 private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);
-	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors);
-	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId, std::vector<Actor*>& vActors);
+	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer);
+	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId);
 	Actor* CreateObjectActor(const Tmx::Object* pObject);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
 	TileActor* CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer);
