@@ -8,7 +8,7 @@ Button* CreateButton()
 }
 
 Button::Button()
-    : m_hitbox(nullptr),
+    : m_spriteActor(nullptr),
     m_event("")
 {
     this->Reset();
@@ -35,16 +35,16 @@ void Button::SetEvent(const std::string& event, EventCallback callback)
 	RegisterEvent(event, callback);
 }
 
-void Button::SetHitbox(sf::IntRect *hitbox)
+void Button::SetHitbox(SpriteActor *spriteActor)
 {
-	this->m_hitbox = hitbox;
+	this->m_spriteActor = spriteActor;
 }
 
 void Button::CheckMousePress(const sf::Event::MouseButtonEvent& mbe) const
 {
-	// button should have a hitbox when checking for collisisions
-	assert(this->m_hitbox != nullptr);
-    if(!this->CanFire() || !this->m_hitbox->contains(mbe.x, mbe.y))
+	// button should have a sprite when checking for collisisions
+	assert(this->m_spriteActor != nullptr);
+    if(!this->CanFire() || !this->m_spriteActor->GetRect().contains(mbe.x, mbe.y))
     {
         return;
     }

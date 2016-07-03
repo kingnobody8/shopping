@@ -30,13 +30,13 @@ public:
 	void Reset();
 
 	void SetEvent(const std::string& event, EventCallback callback);
-	void SetHitbox(sf::IntRect *hitbox);
+	void SetSpriteActor(SpriteActor *spriteActor);
 	// Fires an event/callback if a mouse button is detected
 	void CheckMousePress(const sf::Event::MouseButtonEvent& mbe) const;
 
 private:
-	// rectangle to use as the hitbox
+	// sprite to use as the hitbox
 	// for mouse clicks/taps
-	sf::IntRect *m_hitbox;
+	SpriteActor *m_spriteActor;
 	std::string m_event;
 };
