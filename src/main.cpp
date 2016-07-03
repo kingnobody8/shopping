@@ -52,7 +52,7 @@ void AddItemAttempt(Customer* c, Item* i)
 
 int main(int argc, char** argv)
 {
-
+	Character::InitializeCharacterFrameMap();
 
 	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
 	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
@@ -159,6 +159,14 @@ int main(int argc, char** argv)
 				customer =  Customer(gc, 1000);
 
 				PrintCustomer(&customer);
+			}
+
+			// Skin swap test
+			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::S)
+			{
+				static short skin = 0;
+				skin = (skin + 1) % 4;
+				man->SetSkin(skin);
 			}
 		}
 
