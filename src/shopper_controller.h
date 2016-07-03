@@ -19,9 +19,12 @@ private:
 		None,
 		Idle,
 		LookAround,
+		Wander,
+		Wandering,
 	};
 
 	State m_state;
 	float m_waitTime;
+	int m_moveDir;
 	Character* m_character;
 };

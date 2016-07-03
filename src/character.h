@@ -46,4 +46,7 @@ private:
 
 protected:
 	CharacterController* m_controller;
+
+public:
+	float m_speedMultiplier;
 };

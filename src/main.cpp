@@ -222,6 +222,12 @@ int main(int argc, char** argv)
 					g_buttons[i]->CheckMousePress(vec);
 				}
 			}
+
+			if (event.type == sf::Event::MouseWheelScrolled)
+			{
+				float zoom = 1.0f - event.mouseWheelScroll.delta * 0.11f;
+				view.zoom(zoom);
+			}
 		}
 
 		// Update actors

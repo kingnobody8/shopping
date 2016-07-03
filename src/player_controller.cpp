@@ -39,6 +39,16 @@ void PlayerController::Update(float dt)
 		}
 	}
 
+	// Hack to run fast (for testing)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+	{
+		m_player->m_speedMultiplier = 10;
+	}
+	else
+	{
+		m_player->m_speedMultiplier = 1;
+	}
+
 	m_player->Move(s_characterDeltas[b].x, s_characterDeltas[b].y, dt);
 }
 

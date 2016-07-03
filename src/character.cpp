@@ -125,6 +125,7 @@ Character::Character()
 	, m_skin(0)
 	, m_speed(32.0f)
 	, m_controller(nullptr)
+	, m_speedMultiplier(1.0f)
 {
 	LoadTexture("assets/textures/characters.png", m_texture);
 	m_sprite.setTexture(m_texture);
@@ -173,15 +174,8 @@ void Character::SetFacing(CharacterDirection direction)
 
 void Character::Move(int x, int y, float dt)
 {
-	m_velocity.x = x * m_speed * dt;
-	m_velocity.y = y * m_speed * dt;
-
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
-	{
-		m_velocity.x *= 10;
-		m_velocity.y *= 10;
-	}
+	m_velocity.x = x * m_speed * dt * m_speedMultiplier;
+	m_velocity.y = y * m_speed * dt * m_speedMultiplier;
 
 	if (x != 0)
 	{
