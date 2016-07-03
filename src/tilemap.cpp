@@ -231,7 +231,7 @@ TileActor* TileMap::CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileL
 	TileActor* pTileActor = CreateActor<TileActor>();
 	pTileActor->SetTexture(pTexture);
 	pTileActor->SetTextureRect(rect);
-	pTileActor->SetPosition((float)x * m_pMap->GetTileWidth(), (float)y * m_pMap->GetTileHeight());
+	pTileActor->SetPosition(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight());
 
 	return pTileActor;
 }
