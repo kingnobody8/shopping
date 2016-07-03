@@ -3,7 +3,7 @@
 
 #include "debug_text.h"
 #include "box_actor.h"
-#include "sprite_actor.h"
+#include "player.h"
 #include "text_actor.h"
 #include <vector>
 #include "customer.h"
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
 
-	SpriteActor* man = CreateActor<SpriteActor>();
+	Player* man = CreateActor<Player>();
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
@@ -159,78 +159,75 @@ int main(int argc, char** argv)
 			g_actors[i]->Update(dt);
 		}
 
-	auto collides =	tMap.PerformCollisionTest(man->GetRect());
-	if(!collides.empty())
-	{
-		for (int i = 0; i < collides.size(); ++i)
+		auto collides =	tMap.PerformCollisionTest(man->GetRect());
+		if(!collides.empty())
 		{
-			TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
-			sf::IntRect tileRect = pTileActor->GetRect();
-			sf::IntRect manRect = man->GetRect();
-			sf::IntRect intersect;
-			tileRect.intersects(manRect, intersect);
-
-			int multi = 1;
-			if (intersect.width > intersect.height)
+			for (size_t i = 0; i < collides.size(); ++i)
 			{
-				intersect.width = 0;
-				if (manRect.top > tileRect.top)
-				{
-					multi = -1;
-				}
-			}
-			else
-			{
-				intersect.height = 0;
-				if (manRect.left > tileRect.left)
-				{
-					multi = -1;
-				}
-			}
+				TileActor* pTileActor = static_cast<TileActor*>(collides[i]);
+				sf::IntRect tileRect = pTileActor->GetRect();
+				sf::IntRect manRect = man->GetRect();
+				sf::IntRect intersect;
+				tileRect.intersects(manRect, intersect);
 
-			sf::Vector2f diff(intersect.width, intersect.height);
-			diff.x *= multi;
-			diff.y *= multi;
+				int multi = 1;
+				if (intersect.width > intersect.height)
+				{
+					intersect.width = 0;
+					if (manRect.top > tileRect.top)
+					{
+						multi = -1;
+					}
+				}
+				else
+				{
+					intersect.height = 0;
+					if (manRect.left > tileRect.left)
+					{
+						multi = -1;
+					}
+				}
 
-			man->SetPosition(man->GetPosition() - diff);
+				sf::Vector2f diff(intersect.width, intersect.height);
+				diff.x *= multi;
+				diff.y *= multi;
+
+				man->SetPosition(man->GetPosition() - diff);
+			}
 		}
-	}
 
 
-	sf::IntRect manRect = man->GetRect();
-	bool bSet = false;
-	if (manRect.left < camMoveRect.left)
-	{
-		camMoveRect.left = manRect.left;
-		bSet = true;
-	}
-	if (manRect.top < camMoveRect.top)
-	{
-		camMoveRect.top = manRect.top;
-		bSet = true;
-	}
-	if (manRect.left + manRect.width > camMoveRect.left + camMoveRect.width)
-	{
-		camMoveRect.left = manRect.left + manRect.width - camMoveRect.width;
-		bSet = true;
-	}
-	if (manRect.top + manRect.height > camMoveRect.top + camMoveRect.height)
-	{
-		camMoveRect.top = manRect.top + manRect.height - camMoveRect.height;
-		bSet = true;
-	}
+		sf::IntRect manRect = man->GetRect();
+		bool bSet = false;
+		if (manRect.left < camMoveRect.left)
+		{
+			camMoveRect.left = manRect.left;
+			bSet = true;
+		}
+		if (manRect.top < camMoveRect.top)
+		{
+			camMoveRect.top = manRect.top;
+			bSet = true;
+		}
+		if (manRect.left + manRect.width > camMoveRect.left + camMoveRect.width)
+		{
+			camMoveRect.left = manRect.left + manRect.width - camMoveRect.width;
+			bSet = true;
+		}
+		if (manRect.top + manRect.height > camMoveRect.top + camMoveRect.height)
+		{
+			camMoveRect.top = manRect.top + manRect.height - camMoveRect.height;
+			bSet = true;
+		}
 
-	if (bSet)
-	{
-		view.setCenter(camMoveRect.left + camMoveRect.width / 2.0f, camMoveRect.top + camMoveRect.height / 2.0f);
-	}
+		if (bSet)
+		{
+			view.setCenter(camMoveRect.left + camMoveRect.width / 2.0f, camMoveRect.top + camMoveRect.height / 2.0f);
+		}
 
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
-
-		window.setView(window.getDefaultView());
-		window.draw(g_debugText);
 
 		// Set active camera
 		window.setView(view);
@@ -261,13 +258,16 @@ int main(int argc, char** argv)
 		camRectVerts[4].position.x = camMoveRect.left;
 		camRectVerts[4].position.y = camMoveRect.top;
 
-		for (int i = 0; i < camRectVerts.getVertexCount(); ++i)
+		for (size_t i = 0; i < camRectVerts.getVertexCount(); ++i)
 		{
 			camRectVerts[i].color = sf::Color::Blue;
 		}
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
+		// Debug text
+		window.setView(window.getDefaultView());
+		window.draw(g_debugText);
 
 		// Display window
 		window.display();
