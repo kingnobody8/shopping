@@ -168,6 +168,12 @@
     <ClCompile Include="..\..\src\player.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\item_manager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\item_actor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -312,6 +318,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\player.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\item_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\item_manager.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

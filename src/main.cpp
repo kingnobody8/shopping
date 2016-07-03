@@ -274,6 +274,9 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
+		g_debugText.setColor(sf::Color::Black);
+		DebugPrintf("Munny: %d", customer.GetMunny());
+
 		// Debug text
 		window.setView(window.getDefaultView());
 		window.draw(g_debugText);
