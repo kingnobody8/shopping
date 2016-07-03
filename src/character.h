@@ -2,6 +2,7 @@
 
 #include "sprite_actor.h"
 
+class CharacterController;
 class Character : public SpriteActor
 {
 public:
@@ -20,16 +21,17 @@ public:
 	virtual void Update(float dt);
 
 	void SetFacing(CharacterDirection direction);
-	
-private:
-	void CheckKey(sf::Keyboard::Key key, int i, float dt);
 	void Move(int x, int y, float dt);
 
+private:
 	short m_frame;
 	short m_totalFrames;
 	CharacterDirection m_facing;
 	float m_animTimer;
-	float m_keyTimes[CharacterDirection::Count];
+	
 	float m_speed;
 	sf::Vector2f m_velocity;
+
+protected:
+	CharacterController* m_controller;
 };

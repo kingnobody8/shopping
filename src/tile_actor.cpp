@@ -38,7 +38,7 @@ void TileActor::SetPosition(float x, float y)
 sf::IntRect TileActor::GetRect() const
 {
 	sf::IntRect rect = m_sprite.getTextureRect();
-	rect.left = m_sprite.getPosition().x;
-	rect.top = m_sprite.getPosition().y;
+	rect.left = (int) m_sprite.getPosition().x;
+	rect.top = (int) m_sprite.getPosition().y;
 	return rect;
 }

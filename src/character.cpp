@@ -1,4 +1,5 @@
-#include "Character.h"
+#include "character.h"
+#include "character_controller.h"
 #include "gfx_util.h"
 
 // [direction][frame]
@@ -37,54 +38,27 @@ static sf::IntRect s_characterFrames[][4] =
 	},
 };
 
-static sf::Vector2i s_characterDeltas[] =
-{
-	{0, -1},	// North
-	{0, 1},		// South
-	{1, 0},		// East
-	{-1, 0},	// West
-	{0, 0},		// None
-};
-
 Character::Character()
 	: m_frame(0)
 	, m_totalFrames(4)
 	, m_animTimer(0.0f)
 	, m_speed(32.0f)
+	, m_controller(nullptr)
 {
 	LoadTexture("assets/textures/prof.png", m_texture);
 	m_sprite.setTexture(m_texture);
 
 	SetFacing(CharacterDirection::North);
-
-	for (int i = 0; i < 4; ++i)
-	{
-		m_keyTimes[i] = 0;
-	}
 }
 
 Character::~Character()
-{}
+{
+	delete m_controller;
+}
 
 void Character::Update(float dt)
 {
-	CheckKey(sf::Keyboard::Left, CharacterDirection::West, dt);
-	CheckKey(sf::Keyboard::Right, CharacterDirection::East, dt);
-	CheckKey(sf::Keyboard::Up, CharacterDirection::North, dt);
-	CheckKey(sf::Keyboard::Down, CharacterDirection::South, dt);
-
-	float best = 10000.0f;
-	int b = CharacterDirection::Count;
-	for (int i = 0; i < CharacterDirection::Count; ++i)
-	{
-		if (m_keyTimes[i] > 0 && m_keyTimes[i] < best)
-		{
-			best = m_keyTimes[i];
-			b = i;
-		}
-	}
-
-	Move(s_characterDeltas[b].x, s_characterDeltas[b].y, dt);
+	m_controller->Update(dt);
 
 	m_sprite.move(m_velocity);
 
@@ -112,18 +86,6 @@ void Character::SetFacing(CharacterDirection direction)
 {
 	m_sprite.setTextureRect(s_characterFrames[direction][m_frame]);
 	m_facing = direction;
-}
-
-void Character::CheckKey(sf::Keyboard::Key key, int i, float dt)
-{
-	if (sf::Keyboard::isKeyPressed(key))
-	{
-		m_keyTimes[i] += dt;
-	}
-	else
-	{
-		m_keyTimes[i] = 0;
-	}
 }
 
 void Character::Move(int x, int y, float dt)

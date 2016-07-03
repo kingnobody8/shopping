@@ -3,7 +3,7 @@
 
 #include "debug_text.h"
 #include "box_actor.h"
-#include "Character.h"
+#include "player.h"
 #include "text_actor.h"
 #include <vector>
 #include "customer.h"
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
 
-	Character* man = CreateActor<Character>();
+	Player* man = CreateActor<Player>();
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 		camRectVerts[4].position.x = camMoveRect.left;
 		camRectVerts[4].position.y = camMoveRect.top;
 
-		for (int i = 0; i < camRectVerts.getVertexCount(); ++i)
+		for (size_t i = 0; i < camRectVerts.getVertexCount(); ++i)
 		{
 			camRectVerts[i].color = sf::Color::Blue;
 		}

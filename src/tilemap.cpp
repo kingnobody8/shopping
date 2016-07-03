@@ -138,7 +138,7 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 						continue;
 
 					std::vector<Tmx::Object*> vObjects = pTile->GetObjects();
-					for (int i = 0; i < vObjects.size(); ++i)
+					for (size_t i = 0; i < vObjects.size(); ++i)
 					{
 						Tmx::Object* pObject = vObjects[i];
 						sf::IntRect collisionRect(x * pTileset->GetTileWidth(), y * pTileset->GetTileHeight(), width, height);
