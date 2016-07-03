@@ -2,6 +2,8 @@
 #include "tile_actor.h"
 #include "Tmx.h.in"
 #include <map>
+#include "player.h"
+
 
 class TileMap
 {
@@ -10,6 +12,8 @@ public:
 
 	bool Init(const std::string& szMapPath, std::vector<Actor*>& vActorsInitalList);
 	void Exit();
+
+	inline Player* GetPlayer() const { return m_pPlayer; }
 
 	std::vector<Actor*> PerformCollisionTest(const sf::IntRect& rect);
 
@@ -26,4 +30,6 @@ private:
 	std::vector<sf::Texture*> m_vTilesetTexture;
 	std::vector<Actor*> m_vActors;
 	std::vector<std::vector<Actor*>> m_vTileLayerGrid;
+
+	Player* m_pPlayer;
 };

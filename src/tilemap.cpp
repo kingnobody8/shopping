@@ -1,9 +1,12 @@
 #include "tilemap.h"
 #include "gfx_util.h"
+#include "player.h"
+#include <assert.h>
 
 
 TileMap::TileMap()
 	: m_pMap(nullptr)
+	, m_pPlayer(nullptr)
 {
 
 }
@@ -131,7 +134,6 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 
 void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, std::vector<Actor*>& vActors)
 {
-	return;
 	const std::vector<Tmx::Object*> vObject = pLayer->GetObjects();
 	for (size_t i = 0; i < vObject.size(); ++i)
 	{
@@ -169,7 +171,11 @@ Actor* TileMap::CreateObjectActor(const Tmx::Object* pObject)
 	std::string type = pObject->GetType();
 	if (type == "Spawn")
 	{
-	//	SpriteActor* pSpriteActor = new Sprite
+		assert(m_pPlayer == nullptr);
+		m_pPlayer = new Player();
+		sf::IntRect rect = m_pPlayer->GetRect();
+		m_pPlayer->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+		return m_pPlayer;
 	}
 
 	return nullptr;

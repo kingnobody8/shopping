@@ -86,7 +86,16 @@ int main(int argc, char** argv)
 	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
 	g_debugText.setFont(*g_defaultFont);
 
-	Player* man = CreateActor<Player>();
+	Player* man = tMap.GetPlayer();// CreateActor<Player>();
+
+	/*for (int i = 0; i < g_actors.size(); ++i)
+	{
+		if (g_actors[i]->GetType() == )
+		{
+			man = g_actors[i];
+			break;
+		}
+	}*/
 
 	// Create the camera, origin at center
 	const float w = 352.0f;	// '11' cells
