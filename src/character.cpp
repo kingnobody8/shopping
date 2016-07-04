@@ -171,7 +171,10 @@ void Character::Update(float dt)
 
 void Character::Draw(sf::RenderWindow& window)
 {
+	sf::Vector2f pos = m_sprite.getPosition();
+	m_sprite.setPosition(pos.x, pos.y - 12);
 	GridEntity::Draw(window);
+	m_sprite.setPosition(pos);
 
 	sf::IntRect rect = GetRect();
 

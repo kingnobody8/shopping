@@ -270,7 +270,7 @@ int main(int argc, char** argv)
 		{
 			bool hit = false;
 			std::vector<GridEntity*> vGridEnts = g_currentLevelMap->GetGridEntitiesAtTilePos(player->GetGridNode()->grid_position.x, player->GetGridNode()->grid_position.y);
-			for (int i = 0; i < vGridEnts.size(); ++i)
+			for (size_t i = 0; i < vGridEnts.size(); ++i)
 			{
 				if (vGridEnts[i] == nullptr || vGridEnts[i] == player)
 					continue;
