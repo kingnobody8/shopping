@@ -140,7 +140,7 @@ void Game::NewGame()
 	m_startingMoney = 1000;
 	m_targetMoney = 500;
 	
-	gc = GroceryList();
+	GroceryList gc = GroceryList();
 	gc.AddItem(blue_milk);
 	gc.AddItem(green_eggs);
 	gc.AddItem(white_meat);
@@ -188,11 +188,14 @@ void Game::EndGame()
 			moneyText->m_text.setString(buffer);
 		}
 
+		const GroceryList& gc = m_player.GetGroceryList();
+		int total = gc.GetTotalItems();
+		int checked = gc.GetNumberOfCheckedItems();
+
 		TextActor* itemText = ui->FindActorByName<TextActor>("ItemsText");
 		if (itemText)
 		{
-			int total = gc.GetTotalItems();
-			int checked = gc.GetNumberOfCheckedItems();
+			
 			char buffer[16];
 			sprintf(buffer, "%d/%d", checked, total);
 			itemText->m_text.setString(buffer);
@@ -200,7 +203,7 @@ void Game::EndGame()
 
 		float timeFactor = std::min(1.0f, m_timeRemaining / (float) m_targetTime);
 		float moneyFactor = std::min(1.0f, m_player.GetMunny() / (float) m_targetMoney);
-		float itemFactor = gc.GetNumberOfCheckedItems() / (float) gc.GetTotalItems();
+		float itemFactor = checked / (float) total;
 		float factor = (timeFactor + moneyFactor + itemFactor) / 3.0f;
 		int score = (int) (1000000 * factor);
 

@@ -55,9 +55,6 @@ private:
 	Item white_meat;
 	Item red_candy;
 	Item blue_eggs;
-
-	GroceryList gc;
-
 	sf::View* m_uiView;
 	sf::View* m_gameView;
 };
