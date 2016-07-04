@@ -174,7 +174,6 @@
     <ClCompile Include="..\..\src\item_actor.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\button.cpp" />
     <ClCompile Include="..\..\src\shopper_controller.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -182,7 +181,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\grid_entity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\button.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -337,7 +341,6 @@
     <ClInclude Include="..\..\src\item_manager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\button.h" />
     <ClInclude Include="..\..\src\shopper_controller.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -345,7 +348,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\grid_entity.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\game.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\button.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
