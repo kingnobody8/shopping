@@ -1,26 +1,23 @@
 #pragma once
-#include "actor.h"
+#include "tile_actor.h"
 #include "Tmx.h.in"
 #include "customer.h"
 
-class ItemActor : public Actor
+class ItemActor : public TileActor
 {
 public:
 	ItemActor();
 	
-	void Init(Tmx::Object* pObject);
+	void Init(const std::string& szItemType, const int& cost);
 
 	virtual void Update(float dt);
 	virtual void Draw(sf::RenderWindow& window);
-
-	sf::IntRect GetRect() const;
 
 	void PurchaseItem(Customer* pCustomer);
 
 	const Item& GetItem() { return *m_pItem; }
 
 private:
-	Tmx::Object* m_pObject;
 	Item::EAdjective m_eAdj;
 	Item::EType	m_eType;
 

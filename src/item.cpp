@@ -43,6 +43,7 @@ bool Item::IsValid() const
 	case EType::ET_INVALID:		return "ET_INVALID";
 	case EType::ET_MILK:		return "MILK";
 	case EType::ET_EGGS:		return "EGGS";
+	case EType::ET_FRUIT:		return "FRUIT";
 	case EType::ET_MEAT:		return "MEAT";
 	case EType::ET_SODA:		return "SODA";
 	case EType::ET_CANDY:		return "CANDY";
@@ -69,6 +70,7 @@ bool Item::IsValid() const
 
 	if (szType == "MILK") return EType::ET_MILK;
 	if (szType == "EGGS") return EType::ET_EGGS;
+	if (szType == "FRUIT") return EType::ET_FRUIT;
 	if (szType == "MEAT") return EType::ET_MEAT;
 	if (szType == "SODA") return EType::ET_SODA;
 	if (szType == "CANDY") return EType::ET_CANDY;

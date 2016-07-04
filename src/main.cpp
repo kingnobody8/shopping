@@ -84,6 +84,16 @@ void UnloadUi(const std::string& path)
 	}
 }
 
+TileMap* FindUi(const std::string& path)
+{
+	auto itr = g_uiMaps.find(path);
+	if (itr != g_uiMaps.end())
+	{
+		return itr->second;;
+	}
+	return nullptr;
+}
+
 // We keep a separate list of buttons
 // because buttons don't necessarily need to be drawn
 // or updated. They just need to know what and when to fire
@@ -167,7 +177,7 @@ int main(int argc, char** argv)
 				game.OnKeyReleased(event.key.code);
 			}
 
-			if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
+			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
 				for (size_t i = 0; i < g_buttons.size(); ++i)
@@ -267,6 +277,28 @@ int main(int argc, char** argv)
 		}
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
+
+		if (player != nullptr)
+		{
+			bool hit = false;
+			std::vector<GridEntity*> vGridEnts = g_currentLevelMap->GetGridEntitiesAtTilePos(player->GetGridNode()->grid_position.x, player->GetGridNode()->grid_position.y);
+			for (size_t i = 0; i < vGridEnts.size(); ++i)
+			{
+				if (vGridEnts[i] == nullptr || vGridEnts[i] == player)
+					continue;
+
+				if (vGridEnts[i]->GetType() == "ItemActor")
+				{
+					hit = true;
+					ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
+					DebugPrintf("%s : %d", pItemActor->GetItem().GetItemName().c_str(), pItemActor->GetItem().GetCost());
+				}
+			}
+			if (!hit)
+			{
+				DebugPrintf("");
+			}
+		}
 
 		// Debug text
 		window.setView(window.getDefaultView());

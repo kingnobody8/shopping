@@ -5,7 +5,7 @@ class Item
 {
 public:
 	enum EAdjective { EA_INVALID = -1, EA_BLUE, EA_RED, EA_GREEN, EA_WHITE, EA_COUNT };
-	enum EType { ET_INVALID = -1, ET_MILK, ET_EGGS, ET_MEAT, ET_SODA, ET_CANDY, ET_COUNT };
+	enum EType { ET_INVALID = -1, ET_MILK, ET_EGGS, ET_FRUIT, ET_MEAT, ET_SODA, ET_CANDY, ET_COUNT };
 	static const std::string GetAdjString(const EAdjective& eAdj);
 	static const std::string GetTypeString(const EType& eAdj);
 	static const EAdjective GetAdjFromString(std::string szAdj);

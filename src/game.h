@@ -8,6 +8,7 @@ bool LoadLevel(const std::string& path, sf::View* view);
 void UnloadLevel();
 bool LoadUi(const std::string& path, sf::View* view);
 void UnloadUi(const std::string& path);
+TileMap* FindUi(const std::string& path);
 
 class Game
 {
@@ -28,9 +29,25 @@ public:
 	bool IsStarted() const { return m_isPlaying || m_isOver; }
 
 private:
+	enum ScoreRank
+	{
+		RankSSS,
+		RankSS,
+		RankS,
+		RankA,
+		RankB,
+		RankC,
+		RankD,
+		RankE,
+	};
+
 	bool m_isPlaying;
 	bool m_isOver;
-	float m_timeRemaining;
+	int m_timeRemaining;
+	int m_totalTime;
+	int m_targetTime;
+	int m_startingMoney;
+	int m_targetMoney;
 	Customer m_player;
 
 	Item blue_milk;

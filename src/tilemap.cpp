@@ -85,76 +85,6 @@ void TileMap::Exit()
 	m_pPlayer = nullptr;
 }
 
-std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
-{
-	/*const std::vector<Tmx::ObjectGroup*> vObjGroups = m_pMap->GetObjectGroups();
-	for (int og = 0; og < vObjGroups.size(); ++og)
-	{
-		Tmx::ObjectGroup* pObjGroup = vObjGroups[og];
-		std::vector<Tmx::Object*> vObjects = pObjGroup->GetObjects();
-		for (int i = 0; i < vObjects.size(); ++i)
-		{
-			Tmx::Object* pObject = vObjects[i];
-			std::string tupe = pObject->GetType();
-		}
-	}*/
-
-	std::vector<Actor*> ret;
-
-	const std::vector<Tmx::TileLayer*>& vTileLayer = m_pMap->GetTileLayers();
-	for (size_t ilayer = 0; ilayer < vTileLayer.size(); ++ilayer)
-	{
-		Tmx::TileLayer* pTileLayer = vTileLayer[ilayer];
-		int width = pTileLayer->GetWidth();
-		int height = pTileLayer->GetHeight();
-
-		for (int x = 0; x < width; ++x)
-		{
-			for (int y = 0; y < height; ++y)
-			{
-				int index = y * width + x;
-				if (pTileLayer->GetTileTilesetIndex(x, y) != -1)
-				{
-					int tileId = pTileLayer->GetTileId(x, y);
-					int tileGid = pTileLayer->GetTileGid(x, y);
-					int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
-
-					auto pTileset = m_pMap->GetTileset(tilesetId);
-					const Tmx::Tile* pTile = pTileset->GetTile(tileId);
-					if (pTile == nullptr)
-						continue;
-
-					std::vector<Tmx::Object*> vObjects = pTile->GetObjects();
-					for (size_t i = 0; i < vObjects.size(); ++i)
-					{
-						Tmx::Object* pObject = vObjects[i];
-						sf::IntRect collisionRect(x * pTileset->GetTileWidth(), y * pTileset->GetTileHeight(), width, height);
-						if (collisionRect.intersects(rect))
-						{
-							Actor* pActor = m_vLayerData[ilayer].m_vNodes[x][y].pGridEntity;
-							ret.push_back(pActor);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	//for (size_t i = 0; i < m_vObjectActors.size(); ++i)
-	//{
-	//	//TODO (daniel) for now assume all objects are items
-	//	ItemActor* pItemActor = static_cast<ItemActor*>(m_vObjectActors[i]);
-
-	//	sf::IntRect collisionRect = pItemActor->GetRect();
-	//	if (collisionRect.intersects(rect))
-	//	{
-	//		ret.push_back(pItemActor);
-	//	}
-	//}
-
-	return ret;
-}
-
 int TileMap::GetTileWidth() const
 {
 	return m_pMap->GetTileWidth();
@@ -175,9 +105,33 @@ int TileMap::GetHeight() const
 	return m_pMap->GetHeight() * m_pMap->GetTileHeight();
 }
 
-Actor* TileMap::GetTileActorAt(int x, int y, int layer) const
+GridEntity* TileMap::GetGridEntityAtTilePos(const int& layerId, const int& x, const int& y) const
 {
-	return m_vLayerData[layer].m_vNodes[x][y].pGridEntity;
+	return m_vLayerData[layerId].m_vNodes[x][y].pGridEntity;
+}
+
+std::vector<GridEntity*> TileMap::GetGridEntitiesAtTilePos(const int& x, const int& y) const
+{
+	std::vector<GridEntity*> ents;
+	ents.resize(m_vLayerData.size());
+	for (size_t i = 0; i < m_vLayerData.size(); ++i)
+	{
+		ents[i] = m_vLayerData[i].m_vNodes[x][y].pGridEntity;
+	}
+	return ents;
+}
+
+Actor* TileMap::FindActorByName(const std::string& name) const
+{
+	for (size_t i = 0; i < m_vActors.size(); ++i)
+	{
+		Actor* actor = m_vActors[i];
+		if (actor->m_name == name)
+		{
+			return actor;
+		}
+	}
+	return nullptr;
 }
 
 void TileMap::Update(float dt)
@@ -197,7 +151,7 @@ void TileMap::Draw(sf::RenderWindow& window)
 	}
 }
 
-void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer) 
+void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 {
 }
 
@@ -253,6 +207,16 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 						{
 							m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pGridEntity;
 							m_vActors.push_back(pGridEntity);
+						}
+					}
+					else if (propSet.HasProperty("item_type"))
+					{
+						std::string szItemType = propSet.GetStringProperty("item_type");
+						ItemActor* pItemActor = CreateItemActor(x, y, layerId, pLayer, szItemType);
+						if (pItemActor != nullptr)
+						{
+							m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pItemActor;
+							m_vActors.push_back(pItemActor);
 						}
 					}
 				}
@@ -362,10 +326,14 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject, sf::View* view)
 		actor = textActor;
 	}
 
-	if (props.HasProperty("Button"))
+	if (actor)
 	{
-		const std::string& eventName = props.GetStringProperty("Button");
-		CreateButton(actor, view, eventName);
+		actor->m_name = pObject->GetName();
+		if (props.HasProperty("Button"))
+		{
+			const std::string& eventName = props.GetStringProperty("Button");
+			CreateButton(actor, view, eventName);
+		}
 	}
 
 	return actor;
@@ -421,17 +389,43 @@ GridEntity* TileMap::CreateSpawnTile(int x, int y, int layerId, const Tmx::TileL
 
 	if (spawn)
 	{
-		int width = m_pMap->GetTileWidth();
-		int height = m_pMap->GetTileHeight();
-		sf::IntRect rect = spawn->GetRect();
-		spawn->SetPosition(sf::Vector2f(x * width + width / 2.0f - rect.width / 2.0f, y * height + height / 2.0f - rect.height / 2.0f));
-
-		GridNode* pGridNode = &m_vLayerData[layerId].m_vNodes[x][y];
-		assert(pGridNode->pGridEntity == nullptr); //can't have two grid entites on the same node
-		pGridNode->pGridEntity = spawn;
-		spawn->SetGridNode(pGridNode, layerId);
-		spawn->AlignPositionToNode();
+		AddGridEntityToGrid(spawn, layerId, x, y);
 	}
 
 	return spawn;
+}
+
+ItemActor* TileMap::CreateItemActor(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szItemType)
+{
+	ItemActor* pItemActor = CreateActor<ItemActor>();
+
+	AddGridEntityToGrid(pItemActor, layerId, x, y);
+
+	pItemActor->Init(szItemType, 300); //TODO (daniel) figure out where cost should be init
+
+	//TODO (remove this eventually
+	{
+		int tileId = pTileLayer->GetTileId(x, y);
+		int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
+
+		sf::IntRect rect = CreateTileTextureRect(tileId, tilesetId);
+		const Tmx::Tileset* pTileset = m_pMap->GetTileset(tilesetId);
+		const Tmx::Tile* pTile = pTileset->GetTile(tileId);
+
+		sf::Texture* pTexture = m_vTilesetTexture[tilesetId];
+		pItemActor->SetTexture(pTexture);
+		pItemActor->SetTextureRect(rect);
+		pItemActor->SetPosition(sf::Vector2f(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight()));
+	}
+
+	return pItemActor;
+}
+
+void TileMap::AddGridEntityToGrid(GridEntity* pGridEnt, const int& layerId, const int& x, const int& y)
+{
+	GridNode* pGridNode = &m_vLayerData[layerId].m_vNodes[x][y];
+	assert(pGridNode->pGridEntity == nullptr); //can't have two grid entites on the same node
+	pGridNode->pGridEntity = pGridEnt;
+	pGridEnt->SetGridNode(pGridNode, layerId);
+	pGridEnt->AlignPositionToNode();
 }
