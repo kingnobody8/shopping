@@ -32,7 +32,18 @@ void ShopperController::Update(float dt)
 		Think();
 	}
 
-	//->Move(s_characterDeltas[m_moveDir].x, s_characterDeltas[m_moveDir].y, dt);
+	if (!m_character->IsMoving() && m_moveDir > GridEntity::EDirection::ED_INVALID && m_moveDir < GridEntity::EDirection::ED_COUNT)
+	{
+		GridEntity::EDirection eDir = GridEntity::EDirection(m_moveDir);
+		if (m_character->CanMove(eDir))
+		{
+			m_character->Move(eDir);
+		}
+		else
+		{
+			m_character->SetFacing(eDir);
+		}
+	}
 }
 
 void ShopperController::Think()

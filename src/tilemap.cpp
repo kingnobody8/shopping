@@ -410,7 +410,7 @@ GridEntity* TileMap::CreateSpawnTile(int x, int y, int layerId, const Tmx::TileL
 	}
 	else if (szSpawnType == "shopper")
 	{
-
+		spawn = CreateActor<Shopper>();
 	}
 
 	if (spawn)

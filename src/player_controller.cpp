@@ -57,7 +57,7 @@ void PlayerController::Update(float dt)
 			GridEntity::EDirection eDir = GridEntity::EDirection(b);
 			if (m_player->CanMove(eDir))
 			{
-				m_player->Move(GridEntity::EDirection(b));
+				m_player->Move(eDir);
 			}
 			else
 			{
