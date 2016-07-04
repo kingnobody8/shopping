@@ -263,111 +263,12 @@ void Character::MoveUpdatePostInput(float dt)
 	}
 }
 
-//void Character::Move(int x, int y, float dt)
-//{
-//	m_velocity.x = x * m_speed * dt * m_speedMultiplier;
-//	m_velocity.y = y * m_speed * dt * m_speedMultiplier;
-//
-//	if (x != 0)
-//	{
-//		SetFacing(x < 0 ? CharacterDirection::West : CharacterDirection::East);
-//	}
-//	else if (y != 0)
-//	{
-//		SetFacing(y < 0 ? CharacterDirection::North : CharacterDirection::South);
-//	}
-//}
-
 void Character::SetSkin(short skin)
 {
 	if (skin >= 0 && skin < SKIN_COUNT)
 	{
 		m_skin = skin;
 	}
-}
-
-void Character::ApplyMotion(sf::Vector2f velocity)
-{
-	static const int MAX_ITERATIONS = 100;
-	sf::Vector2f positionStep;
-	sf::Vector2f position = m_sprite.getPosition();
-
-	positionStep.x = velocity.x * 0.16f;
-	positionStep.y = velocity.y * 0.16f;
-
-	for (int i = 0; i < MAX_ITERATIONS; ++i)
-	{
-		// Collide on x
-		if (ValidatePosition(position.x + positionStep.x, position.y))
-		{
-			position.x += positionStep.x;
-		}
-		else
-		{
-			m_velocity.x = 0;
-		}
-
-		// Collide on y
-		if (ValidatePosition(position.x, position.y + positionStep.y))
-		{
-			position.y += positionStep.y;
-		}
-		else
-		{
-			m_velocity.y = 0;
-		}
-
-		velocity -= positionStep;
-
-		// Break conditions
-		if (positionStep.x > 0 && velocity.x <= 0) positionStep.x = 0;	// Got stopped moving left
-		if (positionStep.x < 0 && velocity.x >= 0) positionStep.x = 0;	// Got stopped moving right
-
-		if (positionStep.y > 0 && velocity.y <= 0) positionStep.y = 0;	// Got stopped moving up
-		if (positionStep.y < 0 && velocity.y >= 0) positionStep.y = 0;	// Got stopped moving down
-
-		if (velocity.x == 0) positionStep.x = 0;						// Not moving anymore
-		if (velocity.y == 0) positionStep.y = 0;
-
-		// Break if not moving or no change in position
-		if (velocity.x   == 0 && velocity.y   == 0)   break;
-		if (positionStep.x  == 0 && positionStep.y  == 0)   break;
-	}
-
-	m_sprite.setPosition(position);
-}
-
-bool Character::ValidatePosition(float x, float y)
-{
-	bool posValid = true;
-	const TileMap& map = GetCurrentMap();
-	
-	// Collision check on map
-	int startX = (int) ((x + s_characterCollisionOffsets[m_facing].left) / map.GetTileWidth());
-	int startY = (int) ((y + s_characterCollisionOffsets[m_facing].top) / map.GetTileHeight());
-	int endX   = (int) ((x + m_sprite.getLocalBounds().width - s_characterCollisionOffsets[m_facing].width) / map.GetTileWidth());
-	int endY   = (int) ((y + m_sprite.getLocalBounds().height - s_characterCollisionOffsets[m_facing].height) / map.GetTileHeight());
-
-	for (int iy = startY; iy <= endY; ++iy)
-	{
-		for (int ix = startX; ix <= endX; ++ix)
-		{
-			Actor* tileActor = map.GetTileActorAt(ix, iy, 1);
-			if (tileActor)
-			{
-				if (tileActor->GetType() == "TileActor")
-				{
-					posValid = false;
-				}
-				else if (tileActor->GetType() == "ItemActor")
-				{
-					//pItemActor = static_cast<ItemActor*>(tileActor);
-				}
-			}
-		}
-	}
-
-	return posValid;
 }
 
 /*virtual*/ sf::IntRect Character::GetRect()

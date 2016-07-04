@@ -1,15 +1,6 @@
 #include "shopper_controller.h"
 #include "character.h"
 
-static sf::Vector2i s_characterDeltas[] =
-{
-	{0, -1},	// North
-	{0, 1},		// South
-	{1, 0},		// East
-	{-1, 0},	// West
-	{0, 0},		// None
-};
-
 ShopperController::ShopperController(Character* character)
 	: m_state(None)
 	, m_waitTime(0.0f)

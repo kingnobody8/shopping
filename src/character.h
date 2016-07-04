@@ -18,16 +18,12 @@ public:
 	bool IsMoving() const { return m_fMoveTimer > 0.0f; }
 
 	void SetFacing(EDirection direction);
-	//void Move(int x, int y, float dt);
 	void SetSkin(short skin);
 
 	virtual sf::IntRect GetRect();
 
 
 private:
-	void ApplyMotion(sf::Vector2f velocity);
-	bool ValidatePosition(float x, float y);
-
 	void MoveUpdatePreInput(float dt);
 	void MoveUpdatePostInput(float dt);
 
