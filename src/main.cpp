@@ -265,7 +265,7 @@ int main(int argc, char** argv)
 			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
 			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
 
-			//view.setCenter(x, y);
+			view.setCenter(x, y);
 		}
 
 

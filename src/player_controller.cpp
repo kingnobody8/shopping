@@ -78,3 +78,4 @@ void PlayerController::CheckKey(sf::Keyboard::Key key, int i, float dt)
 		m_keyTimes[i] = 0;
 	}
 }
+

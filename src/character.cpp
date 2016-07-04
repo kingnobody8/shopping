@@ -12,7 +12,7 @@ static const int SKIN_COUNT = SKIN_ROW * SKIN_COL;
 static const int SKIN_STEP_X = 3 * FRAME_WIDTH;
 static const int SKIN_STEP_Y = 4 * FRAME_HEIGHT;
 
-static const float MOVE_TIME = 0.25f;
+static const float MOVE_TIME = 0.32f;
 
 static int s_characterFrameMapping[][4][2] =
 {
@@ -144,16 +144,13 @@ Character::~Character()
 
 void Character::Update(float dt)
 {
+	MoveUpdatePreInput(dt);
 	m_controller->Update(dt);
+	MoveUpdatePostInput(dt);
 
-	//m_sprite.move(m_velocity);
-	MoveUpdate(dt);
-
-	/*ApplyMotion(m_velocity);
-
-	if (m_velocity.x == 0 && m_velocity.y == 0)
+	if (!IsMoving())
 	{
-		m_frame = 1;
+		//m_frame = 1;
 		SetFacing(m_facing);
 	}
 	else
@@ -167,8 +164,9 @@ void Character::Update(float dt)
 			{
 				m_frame = 0;
 			}
+			SetFacing(m_facing);
 		}
-	}*/
+	}
 }
 
 void Character::Draw(sf::RenderWindow& window)
@@ -227,8 +225,10 @@ void Character::SetFacing(EDirection direction)
 	m_facing = direction;
 }
 
-void Character::MoveUpdate(float dt)
+void Character::MoveUpdatePreInput(float dt)
 {
+	m_bMoveMarker = false;
+
 	if (m_fMoveTimer < 0)
 		return;
 
@@ -236,23 +236,31 @@ void Character::MoveUpdate(float dt)
 
 	if (m_fMoveTimer < 0)
 	{
-		m_frame = 1;
-		SetFacing(m_facing);
+		m_bMoveMarker = true;
 		m_fMoveTimer = -1.0f;
 		m_eMoveDir = GridEntity::EDirection::ED_INVALID;
 		AlignPositionToNode();
 		return;
 	}
 
-	float lerp = (MOVE_TIME - m_fMoveTimer / MOVE_TIME);
+	float lerp = (MOVE_TIME - m_fMoveTimer) / MOVE_TIME;
 	sf::Vector2i lerpPos;
 	lerpPos.x = m_oldPos.x + lerp * (m_pGridNode->position.x - m_oldPos.x);
 	lerpPos.y = m_oldPos.y + lerp * (m_pGridNode->position.y - m_oldPos.y);
 
-
 	sf::IntRect rect = GetRect();
 	SetPosition(sf::Vector2f(lerpPos.x - rect.width / 2, lerpPos.y - rect.height / 2));
 
+}
+
+
+void Character::MoveUpdatePostInput(float dt)
+{
+	if (m_bMoveMarker && m_fMoveTimer < 0)
+	{
+		m_frame = 1;
+		SetFacing(m_facing);
+	}
 }
 
 //void Character::Move(int x, int y, float dt)

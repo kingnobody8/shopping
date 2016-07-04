@@ -30,8 +30,8 @@ private:
 	void ApplyMotion(sf::Vector2f velocity);
 	bool ValidatePosition(float x, float y);
 
-	void MoveUpdate(float dt);
-
+	void MoveUpdatePreInput(float dt);
+	void MoveUpdatePostInput(float dt);
 
 	short m_frame;
 	short m_totalFrames;
@@ -45,6 +45,7 @@ private:
 	float m_fMoveTimer;
 	EDirection m_eMoveDir;
 	sf::Vector2i m_oldPos;
+	bool m_bMoveMarker;
 
 protected:
 	CharacterController* m_controller;

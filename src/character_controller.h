@@ -7,4 +7,5 @@ public:
 	virtual ~CharacterController() {}
 
 	virtual void Update(float dt) = 0;
+
 };
