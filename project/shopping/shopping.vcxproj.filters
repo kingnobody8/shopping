@@ -184,6 +184,8 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\src\button.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\button.cpp">
@@ -351,6 +353,8 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game.h">
+    </ClInclude>
+    <ClInclude Include="..\..\src\button.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\button.h">

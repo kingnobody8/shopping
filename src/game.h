@@ -1,18 +1,23 @@
 #pragma once
 #include <SFML/Window.hpp>
 #include "customer.h"
+#include "event.h"
 #include "tilemap.h"
 
-bool LoadLevel(const std::string& path);
+bool LoadLevel(const std::string& path, sf::View* view);
 void UnloadLevel();
-bool LoadUi(const std::string& path);
+bool LoadUi(const std::string& path, sf::View* view);
 void UnloadUi(const std::string& path);
 
 class Game
 {
 public:
 	Game();
+	Game(sf::View& uiView, sf::View& gameView);
 
+	~Game();
+
+	void Init();
 	void NewGame();
 	void EndGame();
 
@@ -35,4 +40,7 @@ private:
 	Item blue_eggs;
 
 	GroceryList gc;
+
+	sf::View* m_uiView;
+	sf::View* m_gameView;
 };

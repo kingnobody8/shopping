@@ -11,6 +11,7 @@ public:
 	~TextActor();
 
 	virtual void Draw(sf::RenderWindow& window);
+	virtual sf::IntRect GetRect();
 
 	sf::Text m_text;
 };

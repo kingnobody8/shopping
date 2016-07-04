@@ -2,6 +2,8 @@
 
 static std::map<std::string, std::vector<EventCallback>> g_eventMap;
 
+// Registers an event to a callback
+// e.g. RegisterEvent("GOO GOO", ([](void *x) {printf("GOO GOO EVENT BODY\n"); }));
 void RegisterEvent(const std::string& name, EventCallback callback)
 {
 	std::map<std::string, std::vector<EventCallback>>::iterator itr = g_eventMap.find(name);
@@ -32,7 +34,7 @@ void FireEvent(const std::string& name, void* clientData)
 	{
 		for (auto vitr = itr->second.begin(); vitr != itr->second.end(); vitr++)
 		{
-			(*vitr)(clientData);
+			if(*vitr != nullptr) (*vitr)(clientData);
 		}
 	}
 }

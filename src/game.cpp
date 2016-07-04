@@ -1,9 +1,9 @@
 #include "game.h"
 
-static void SetLevel(const std::string& path)
+static void SetLevel(const std::string& path, sf::View* view)
 {
 	UnloadUi("assets/main_menu.tmx");
-	LoadLevel(path);
+	LoadLevel(path, view);
 	printf("Entering %s...\n", path.c_str());
 }
 
@@ -36,7 +36,34 @@ Game::Game()
 	, white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000)
 	, red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250)
 	, blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300)
+	, m_uiView(nullptr)
+	, m_gameView(nullptr)
 {}
+
+Game::Game(sf::View& uiView, sf::View& gameView)
+	: m_isPlaying(false)
+	, blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500)
+	, green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750)
+	, white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000)
+	, red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250)
+	, blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300)
+	, m_uiView(&uiView)
+	, m_gameView(&gameView)
+{}
+
+Game::~Game()
+{
+	UnRegisterEvent("START_GAME");
+}
+
+void Game::Init()
+{
+	RegisterEvent("START_GAME", [this](void *x) {
+		EndGame();
+		NewGame();
+		SetLevel("assets/test_shop.tmx", m_uiView);
+	});
+}
 
 void Game::NewGame()
 {
@@ -58,6 +85,12 @@ void Game::NewGame()
 
 void Game::EndGame()
 {
+	// if we're not playing and the game is not over
+	// there is nothing to do
+	if (!m_isPlaying && !m_isOver)
+	{
+		return;
+	}
 	printf("Game is over!\n");
 
 	m_isPlaying = false;
@@ -94,12 +127,12 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 		{
 			EndGame();
 			NewGame();
-			SetLevel("assets/test_shop.tmx");
+			SetLevel("assets/test_shop.tmx", m_uiView);
 		}
 		if (key == sf::Keyboard::Escape)
 		{
 			UnloadLevel();
-			LoadUi("assets/main_menu.tmx");
+			LoadUi("assets/main_menu.tmx", m_uiView);
 			EndGame();
 		}
 	}
@@ -108,7 +141,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 		if (key == sf::Keyboard::Return)
 		{
 			NewGame();
-			SetLevel("assets/test_shop.tmx");
+			SetLevel("assets/test_shop.tmx", m_gameView);
 		}
 	}
 }

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="5">
+ <tileset firstgid="1" name="shitty_button" tilewidth="16" tileheight="16" tilecount="3" columns="3">
+  <image source="textures/shitty_button.png" trans="ff00ff" width="48" height="16"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4AywAjETAQw84C5bvC7bxQQDwBV+AAp
+  </data>
+ </layer>
  <objectgroup name="Object Layer 1">
   <object id="1" name="Title" type="Text" x="32" y="16" width="254" height="47">
    <properties>
@@ -12,12 +20,14 @@
    <properties>
     <property name="Align" value="Center"/>
     <property name="Text" value="Quit"/>
+    <property name="Button" value="QUIT_GAME"/>
    </properties>
   </object>
   <object id="4" name="Start" type="Text" x="80" y="112" width="160" height="16">
    <properties>
     <property name="Align" value="Center"/>
     <property name="Text" value="Start"/>
+    <property name="Button" value="START_GAME"/>
    </properties>
   </object>
  </objectgroup>

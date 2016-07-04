@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.h>
+
 #include <SFML/Graphics.hpp>
 
 class Actor;
@@ -21,6 +23,8 @@ public:
 	virtual void Draw(sf::RenderWindow& window) {}
 
 	const std::string& GetType() { return m_szType; }
+	// Some actors may have rectangles, but those that don't should just hit this assert
+	virtual sf::IntRect GetRect() { assert(false); return sf::IntRect(); }
 
 protected:
 	std::string m_szType;

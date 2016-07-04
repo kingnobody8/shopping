@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-//#include <SFML/Ausdio.hpp>
+//#include <SFML/Audio.hpp>
 
 #include "event.h"
 #include "debug_text.h"
@@ -32,10 +32,10 @@ const TileMap& GetCurrentMap()
 }
 std::map<std::string, TileMap*> g_uiMaps;
 
-bool LoadLevel(const std::string& path)
+bool LoadLevel(const std::string& path, sf::View* view)
 {
 	TileMap* map = new TileMap;
-	if (!map->Init(path, &itemManager))
+	if (!map->Init(path, &itemManager, view))
 	{
 		delete map;
 		return false;
@@ -61,10 +61,10 @@ void UnloadLevel()
 	g_currentLevelMap = &g_dummyMap;
 }
 
-bool LoadUi(const std::string& path)
+bool LoadUi(const std::string& path, sf::View* view)
 {
 	TileMap* map = new TileMap;
-	if (!map->Init(path, nullptr))
+	if (!map->Init(path, nullptr, view))
 	{
 		delete map;
 		return false;
@@ -122,20 +122,23 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
-	LoadUi("assets/main_menu.tmx");
-	Game game;
-
+	sf::View uiView = window.getDefaultView();
 	// Create the camera, origin at center
 	const float w = 176; // '11' cells
 	const float h = 128; // '8' cells
 	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
+
+	LoadUi("assets/main_menu.tmx", &uiView);
+	Game game;
+	game.Init();
+
+	Player* man = g_currentLevelMap->GetPlayer();
+
 	sf::IntRect camMoveRect;
 	camMoveRect.left = view.getCenter().x - view.getSize().x / 3.0f;
 	camMoveRect.top = view.getCenter().y - view.getSize().y / 3.0f;
 	camMoveRect.width = view.getSize().x / 3.0f;
 	camMoveRect.height = view.getSize().y / 3.0f;
-
-	sf::View uiView = window.getDefaultView();
 
 	sf::Clock clock;
 	while (window.isOpen())
@@ -167,10 +170,9 @@ int main(int argc, char** argv)
 			if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
-				sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), view);
 				for (size_t i = 0; i < g_buttons.size(); ++i)
 				{
-					g_buttons[i]->CheckMousePress(vec);
+					g_buttons[i]->CheckMousePress(mbe, window);
 				}
 			}
 
