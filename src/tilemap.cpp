@@ -202,15 +202,23 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 
 void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId)
 {
-	//const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
-	//m_vLayerData[layerId].m_vObjects.resize(vObject.size());
-	//for (size_t i = 0; i < vObject.size(); ++i)
-	//{
-	//	Tmx::Object* pObject = vObject[i];
-	//	Actor* actor = CreateObjectActor(pObject);
-	//	m_vLayerData[layerId].m_vObjects[i] = actor;
-	//	m_vActors.push_back(actor);
-	//}
+	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
+	m_vLayerData[layerId].m_vObjects.resize(vObject.size());
+	for (size_t i = 0; i < vObject.size(); ++i)
+	{
+		Tmx::Object* pObject = vObject[i];
+		Actor* actor = CreateObjectActor(pObject);
+		if (actor != nullptr)
+		{
+			m_vLayerData[layerId].m_vObjects[i] = actor;
+			m_vActors.push_back(actor);
+		}
+		else
+		{
+			printf("error: cannot create object: %s\n", pObject->GetName().c_str());
+		}
+		
+	}
 }
 
 void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
@@ -330,29 +338,29 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 	//	m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
 	//	actor = itemActor;
 	//}
-	//else if (type == "Text")
-	//{
-	//	const Tmx::PropertySet& props = pObject->GetProperties();
-	//	std::string text = props.GetStringProperty("Text");
+	if (type == "Text")
+	{
+		const Tmx::PropertySet& props = pObject->GetProperties();
+		std::string text = props.GetStringProperty("Text");
 
-	//	TextActor* textActor = CreateActor<TextActor>();
-	//	textActor->m_text.setString(text);
-	//	textActor->m_text.setPosition(pObject->GetX(), pObject->GetY());
+		TextActor* textActor = CreateActor<TextActor>();
+		textActor->m_text.setString(text);
+		textActor->m_text.setPosition(pObject->GetX(), pObject->GetY());
 
-	//	int size = props.GetIntProperty("Size", textActor->m_text.getCharacterSize());
-	//	textActor->m_text.setCharacterSize(size);
+		int size = props.GetIntProperty("Size", textActor->m_text.getCharacterSize());
+		textActor->m_text.setCharacterSize(size);
 
-	//	std::string align = props.GetStringProperty("Align");
-	//	if (align == "Center")
-	//	{
-	//		sf::FloatRect bounds = textActor->m_text.getLocalBounds();
-	//		textActor->m_text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
+		std::string align = props.GetStringProperty("Align");
+		if (align == "Center")
+		{
+			sf::FloatRect bounds = textActor->m_text.getLocalBounds();
+			textActor->m_text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
 
-	//		textActor->m_text.move(pObject->GetWidth() / 2.0f, pObject->GetHeight() / 2.0f);
-	//	}
+			textActor->m_text.move(pObject->GetWidth() / 2.0f, pObject->GetHeight() / 2.0f);
+		}
 
-	//	actor = textActor;
-	//}
+		actor = textActor;
+	}
 
 	return actor;
 }
