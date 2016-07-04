@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="13">
+ <objectgroup name="Object Layer 1">
+  <object id="1" name="GameOver" type="Text" x="80" y="16" width="160" height="48">
+   <properties>
+    <property name="Align" value="Center"/>
+    <property name="Size" value="48"/>
+    <property name="Text" value="Game Over"/>
+   </properties>
+  </object>
+  <object id="2" type="Text" x="16" y="80" width="32" height="16">
+   <properties>
+    <property name="Text" value="Time"/>
+   </properties>
+  </object>
+  <object id="4" type="Text" x="16" y="112" width="32" height="16">
+   <properties>
+    <property name="Text" value="Money"/>
+   </properties>
+  </object>
+  <object id="5" type="Text" x="16" y="144" width="32" height="16">
+   <properties>
+    <property name="Text" value="Items"/>
+   </properties>
+  </object>
+  <object id="6" name="TimeText" type="Text" x="80" y="80" width="32" height="16">
+   <properties>
+    <property name="Text" value="00:00"/>
+   </properties>
+  </object>
+  <object id="7" name="MoneyText" type="Text" x="80" y="112" width="32" height="16">
+   <properties>
+    <property name="Text" value="$999"/>
+   </properties>
+  </object>
+  <object id="8" name="ItemsText" type="Text" x="80" y="144" width="32" height="16">
+   <properties>
+    <property name="Text" value="7/10"/>
+   </properties>
+  </object>
+  <object id="9" type="Text" x="16" y="176" width="32" height="16">
+   <properties>
+    <property name="Text" value="Score"/>
+   </properties>
+  </object>
+  <object id="10" name="ScoreText" type="Text" x="80" y="176" width="64" height="16">
+   <properties>
+    <property name="Text" value="1000000"/>
+   </properties>
+  </object>
+  <object id="11" name="FlavorText" type="Text" x="176" y="80" width="64" height="16">
+   <properties>
+    <property name="Text" value="You are still happily married."/>
+   </properties>
+  </object>
+  <object id="12" name="RankText" type="Text" x="176" y="176" width="64" height="16">
+   <properties>
+    <property name="Text" value="SSS"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

@@ -84,6 +84,16 @@ void UnloadUi(const std::string& path)
 	}
 }
 
+TileMap* FindUi(const std::string& path)
+{
+	auto itr = g_uiMaps.find(path);
+	if (itr != g_uiMaps.end())
+	{
+		return itr->second;;
+	}
+	return nullptr;
+}
+
 // We keep a separate list of buttons
 // because buttons don't necessarily need to be drawn
 // or updated. They just need to know what and when to fire

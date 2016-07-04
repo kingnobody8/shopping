@@ -179,6 +179,19 @@ Actor* TileMap::GetTileActorAt(int x, int y, int layer) const
 	return m_vLayerData[layer].m_vNodes[x][y].pGridEntity;
 }
 
+Actor* TileMap::FindActorByName(const std::string& name) const
+{
+	for (size_t i = 0; i < m_vActors.size(); ++i)
+	{
+		Actor* actor = m_vActors[i];
+		if (actor->m_name == name)
+		{
+			return actor;
+		}
+	}
+	return nullptr;
+}
+
 void TileMap::Update(float dt)
 {
 	for (size_t i = 0; i < m_vActors.size(); ++i)
@@ -360,6 +373,11 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 		}
 
 		actor = textActor;
+	}
+
+	if (actor)
+	{
+		actor->m_name = pObject->GetName();
 	}
 
 	return actor;

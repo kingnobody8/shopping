@@ -22,6 +22,8 @@ public:
 
 	const std::string& GetType() { return m_szType; }
 
+	std::string m_name;
+
 protected:
 	std::string m_szType;
 };

@@ -55,6 +55,24 @@ void GroceryList::PrintList() const
 	}
 }
 
+int GroceryList::GetTotalItems() const
+{
+	return (int) m_vCheckSlot.size();
+}
+
+int GroceryList::GetNumberOfCheckedItems() const
+{
+	int n = 0;
+	for (size_t i = 0; i < m_vCheckSlot.size(); ++i)
+	{
+		if (m_vCheckSlot[i].m_eCheckState == GroceryList::ECheckState::ECS_FILLED || m_vCheckSlot[i].m_eCheckState == GroceryList::ECheckState::ECS_RIGHT_TYPE_WRONG_ADJ)
+		{
+			++n;
+		}
+	}
+	return n;
+}
+
 
 GroceryList::CheckSlot* GroceryList::FindCheckSlotByType(const Item::EType& eType)
 {

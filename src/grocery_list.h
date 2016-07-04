@@ -27,6 +27,9 @@ public:
 
 	void PrintList() const;
 
+	int GetTotalItems() const;
+	int GetNumberOfCheckedItems() const;
+
 private:
 	CheckSlot* FindCheckSlotByType(const Item::EType& eType);
 

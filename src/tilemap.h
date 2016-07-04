@@ -117,6 +117,12 @@ public:
 	int GetHeight() const;
 
 	Actor* GetTileActorAt(int x, int y, int layer) const;
+	Actor* FindActorByName(const std::string& name) const;
+	template<typename TActor>
+	TActor* FindActorByName(const std::string& name) const
+	{
+		return static_cast<TActor*>(FindActorByName(name));
+	}
 
 	void Update(float dt);
 	void Draw(sf::RenderWindow& window);
