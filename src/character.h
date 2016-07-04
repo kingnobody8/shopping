@@ -2,8 +2,6 @@
 
 #include "sprite_actor.h"
 
-extern class ItemActor* pItemActor;
-
 class CharacterController;
 class Character : public SpriteActor
 {

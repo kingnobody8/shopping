@@ -270,7 +270,7 @@ bool Character::ValidatePosition(float x, float y)
 				}
 				else if (tileActor->GetType() == "ItemActor")
 				{
-					pItemActor = static_cast<ItemActor*>(tileActor);
+					//pItemActor = static_cast<ItemActor*>(tileActor);
 				}
 			}
 		}
