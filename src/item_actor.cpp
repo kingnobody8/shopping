@@ -6,8 +6,7 @@
 #include <iostream> 
 
 ItemActor::ItemActor()
-	: m_pObject(nullptr)
-	, m_eAdj(Item::EAdjective::EA_INVALID)
+	: m_eAdj(Item::EAdjective::EA_INVALID)
 	, m_eType(Item::EType::ET_INVALID)
 	, m_pItem(nullptr)
 {
@@ -20,6 +19,7 @@ void ItemActor::Update(float dt)
 
 void ItemActor::Draw(sf::RenderWindow& window)
 {
+	TileActor::Draw(window);
 	sf::IntRect rect = GetRect();
 
 	sf::VertexArray verts;
@@ -51,15 +51,8 @@ void ItemActor::Draw(sf::RenderWindow& window)
 	window.draw(&verts[0], verts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 }
 
-void ItemActor::Init(Tmx::Object* pObject)
+void ItemActor::Init(const std::string& szItemType, const int& cost)
 {
-	m_pObject = pObject;
-
-	const Tmx::PropertySet& propSet = m_pObject->GetProperties();
-	assert(propSet.HasProperty("item_type"));
-
-	std::string szItemType = propSet.GetStringProperty("item_type");
-
 	size_t index = szItemType.find_first_of("_");
 	std::string szAdj = std::string(szItemType.begin(), szItemType.begin() + index);
 	std::string szType = std::string(szItemType.begin() + index + 1, szItemType.end());
@@ -68,22 +61,11 @@ void ItemActor::Init(Tmx::Object* pObject)
 	m_eType = Item::GetTypeFromString(szType);
 	assert(m_eAdj != Item::EAdjective::EA_INVALID && m_eType != Item::EType::ET_INVALID);
 
-	m_pItem = new Item(m_eAdj, m_eType, 300);
-}
-
-sf::IntRect ItemActor::GetRect() const
-{
-	sf::IntRect rect;
-	rect.left = m_pObject->GetX();
-	rect.top = m_pObject->GetY();
-	rect.width = m_pObject->GetWidth();
-	rect.height = m_pObject->GetHeight();
-	return rect;
+	m_pItem = new Item(m_eAdj, m_eType, cost);
 }
 
 void ItemActor::PurchaseItem(Customer* pCustomer)
 {
-
 	if (pCustomer->CanAddItem(*m_pItem))
 	{
 		pCustomer->AddItem(*m_pItem);

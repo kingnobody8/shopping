@@ -174,7 +174,7 @@ int main(int argc, char** argv)
 				game.OnKeyReleased(event.key.code);
 			}
 
-			if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
+			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
 				sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), view);
@@ -275,6 +275,28 @@ int main(int argc, char** argv)
 		}
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
+
+		if (player != nullptr)
+		{
+			bool hit = false;
+			std::vector<GridEntity*> vGridEnts = g_currentLevelMap->GetGridEntitiesAtTilePos(player->GetGridNode()->grid_position.x, player->GetGridNode()->grid_position.y);
+			for (size_t i = 0; i < vGridEnts.size(); ++i)
+			{
+				if (vGridEnts[i] == nullptr || vGridEnts[i] == player)
+					continue;
+
+				if (vGridEnts[i]->GetType() == "ItemActor")
+				{
+					hit = true;
+					ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
+					DebugPrintf("%s : %d", pItemActor->GetItem().GetItemName().c_str(), pItemActor->GetItem().GetCost());
+				}
+			}
+			if (!hit)
+			{
+				DebugPrintf("");
+			}
+		}
 
 		// Debug text
 		window.setView(window.getDefaultView());

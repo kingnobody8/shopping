@@ -281,6 +281,36 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 				m_isOver = false;
 			}
 		}
+		if (key == sf::Keyboard::Space)
+		{
+			const TileMap map = GetCurrentMap();
+			Player* pPlayer = map.GetPlayer();
+			if (pPlayer != nullptr)
+			{
+				sf::Vector2i gridPos = pPlayer->GetGridNode()->grid_position;
+				std::vector<GridEntity*> vGridEnts = map.GetGridEntitiesAtTilePos(pPlayer->GetGridNode()->grid_position.x, pPlayer->GetGridNode()->grid_position.y);
+				for (size_t i = 0; i < vGridEnts.size(); ++i)
+				{
+					if (vGridEnts[i] == nullptr || vGridEnts[i] == pPlayer)
+						continue;
+
+					if (vGridEnts[i]->GetType() == "ItemActor")
+					{
+						ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
+						if (m_player.CanAddItem(pItemActor->GetItem()))
+						{
+							m_player.AddItem(pItemActor->GetItem());
+							m_player.PrintGroceryList();
+							m_player.PrintInventory();
+						}
+						else
+						{
+							//TODO (daniel) put bad beep here + message
+						}
+					}
+				}
+			}
+		}
 	}
 	else
 	{

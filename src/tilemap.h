@@ -108,15 +108,14 @@ public:
 
 	inline Player* GetPlayer() const { return m_pPlayer; }
 
-	std::vector<Actor*> PerformCollisionTest(const sf::IntRect& rect);
-
 	int GetTileWidth() const;
 	int GetTileHeight() const;
 
 	int GetWidth() const;
 	int GetHeight() const;
 
-	Actor* GetTileActorAt(int x, int y, int layer) const;
+	GridEntity* GetGridEntityAtTilePos(const int& layerId, const int& x, const int& y) const;
+	std::vector<GridEntity*> GetGridEntitiesAtTilePos(const int& x, const int& y) const;
 	Actor* FindActorByName(const std::string& name) const;
 	template<typename TActor>
 	TActor* FindActorByName(const std::string& name) const
@@ -135,6 +134,9 @@ private:
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
 	TileActor* CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer);
 	GridEntity* CreateSpawnTile(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szSpawnType);
+	ItemActor* CreateItemActor(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szItemType);
+
+	void AddGridEntityToGrid(GridEntity* pGridEnt, const int& layerId, const int& x, const int& y);
 
 private:
 	Tmx::Map* m_pMap;

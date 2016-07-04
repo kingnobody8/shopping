@@ -1,14 +1,5 @@
 #include "player_controller.h"
 
-static sf::Vector2i s_characterDeltas[] =
-{
-	{0, -1},	// North
-	{0, 1},		// South
-	{1, 0},		// East
-	{-1, 0},	// West
-	{0, 0},		// None
-};
-
 PlayerController::PlayerController(Character* player)
 	: m_player(player)
 	, m_bIsInputDisabled(false)

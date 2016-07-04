@@ -12,9 +12,7 @@ public:
 	virtual void Draw(sf::RenderWindow& window);
 
 	const sf::Vector2f& GetPosition() { return m_sprite.getPosition(); }
-	void SetPosition(const sf::Vector2f pos) {
-		m_sprite.setPosition(pos); 
-	}
+	void SetPosition(const sf::Vector2f pos) { m_sprite.setPosition(pos); }
 	virtual sf::IntRect GetRect();
 
 protected:
