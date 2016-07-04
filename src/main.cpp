@@ -14,36 +14,80 @@
 #include "tilemap.h"
 #include "item_manager.h"
 #include "item_actor.h"
+#include "game.h"
 //#include <vld.h>
 
 sf::Font* g_defaultFont;
 sf::Text g_debugText;
 sf::RectangleShape g_debugTextBackground;
-std::vector<Actor*> g_actors;
-TileMap g_map;
-Customer* g_customer;
-bool isActionReleased = false;
-ItemActor* pItemActor = nullptr;
+
+ItemManager itemManager;
+
+TileMap g_dummyMap;
+TileMap* g_currentLevelMap = nullptr;
 
 const TileMap& GetCurrentMap()
 {
-	return g_map;
+	return *g_currentLevelMap;
 }
+std::map<std::string, TileMap*> g_uiMaps;
+
+bool LoadLevel(const std::string& path)
+{
+	TileMap* map = new TileMap;
+	if (!map->Init(path, &itemManager))
+	{
+		delete map;
+		return false;
+	}
+
+	if (g_currentLevelMap != &g_dummyMap)
+	{
+		g_currentLevelMap->Exit();
+		delete g_currentLevelMap;
+	}
+
+	g_currentLevelMap = map;
+	return true;
+}
+
+void UnloadLevel()
+{
+	if (g_currentLevelMap != &g_dummyMap)
+	{
+		g_currentLevelMap->Exit();
+		delete g_currentLevelMap;
+	}
+	g_currentLevelMap = &g_dummyMap;
+}
+
+bool LoadUi(const std::string& path)
+{
+	TileMap* map = new TileMap;
+	if (!map->Init(path, nullptr))
+	{
+		delete map;
+		return false;
+	}
+	g_uiMaps[path] = map;
+	return true;
+}
+
+void UnloadUi(const std::string& path)
+{
+	auto itr = g_uiMaps.find(path);
+	if (itr != g_uiMaps.end())
+	{
+		itr->second->Exit();
+		delete itr->second;
+		g_uiMaps.erase(itr);
+	}
+}
+
 // We keep a separate list of buttons
 // because buttons don't necessarily need to be drawn
 // or updated. They just need to know what and when to fire
 std::vector<Button*> g_buttons;
-
-void RegisterActor(Actor* actor)
-{
-	g_actors.push_back(actor);
-}
-
-void DestroyActor(Actor* actor)
-{
-	g_actors.erase(std::find(g_actors.begin(), g_actors.end(), actor));
-	delete actor;
-}
 
 void RegisterButton(Button* button)
 {
@@ -56,56 +100,17 @@ void DestroyButton(Button* button)
 	delete button;
 }
 
-void PrintCustomer(Customer* c)
-{
-	printf("Customer Wallet: %d\n", c->GetMunny());
-	c->PrintGroceryList();
-	c->PrintInventory();
-}
-
-void AddItemAttempt(Customer* c, Item* i)
-{
-	printf("Adding item: %d %s\n", i->GetCost(), i->GetItemName().c_str());
-	printf("Customer wallet: %d\n", c->GetMunny());
-	bool canAdd = c->CanAddItem(*i);
-	printf("CanAddItem: %d\n", canAdd);
-
-	if (canAdd)
-	{
-		c->AddItem(*i);
-		PrintCustomer(c);
-	}
-	printf("\n\n");
-}
-
-void PurchaseItemTest(void* clientData)
-{
-	EVENT_AS(ItemActor, itemActor);
-
-	itemActor.PurchaseItem(g_customer);
-	printf("Got it\n");
-}
-
 int main(int argc, char** argv)
 {
+	g_defaultFont = new sf::Font;
+
+	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
+	g_debugText.setFont(*g_defaultFont);
+	g_debugTextBackground.setFillColor(sf::Color::Black);
+
+	g_currentLevelMap = &g_dummyMap;
+
 	Character::InitializeCharacterFrameMap();
-
-
-	Item blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500);
-	Item green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750);
-	Item white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000);
-	Item red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250);
-	Item blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300);
-
-	GroceryList gc;
-	gc.AddItem(blue_milk);
-	gc.AddItem(green_eggs);
-	gc.AddItem(white_meat);
-	gc.AddItem(red_candy);
-
-	g_customer = new Customer(gc, 1000);
-
-	RegisterEvent("PurchaseItem", PurchaseItemTest);
 
 	//sf::Music music;
 	//if (music.openFromFile("assets/sounds/110-pokemon-center.wav"))
@@ -117,22 +122,11 @@ int main(int argc, char** argv)
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Shopping Game", sf::Style::Default);
 	window.setActive();
 
-	ItemManager itemManager;
-	g_map.Init("assets/test_shop.tmx", &itemManager);
+	LoadUi("assets/main_menu.tmx");
+	Game game;
 
-	g_defaultFont = new sf::Font;
-
-	g_defaultFont->loadFromFile("assets/fonts/m5x7.ttf");
-	g_debugText.setFont(*g_defaultFont);
-	g_debugTextBackground.setFillColor(sf::Color::Black);
-
-	Player* man = g_map.GetPlayer();
-
-	Button *manButton = CreateButton();
-	manButton->SetSpriteActor(man);
-	manButton->SetEvent("GOO GOO", ([](void *x) {printf("GOO GOO EVENT BODY\n"); }));
 	// Create the camera, origin at center
-	const float w = 176;	// '11' cells
+	const float w = 176; // '11' cells
 	const float h = 128; // '8' cells
 	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
 	sf::IntRect camMoveRect;
@@ -140,15 +134,13 @@ int main(int argc, char** argv)
 	camMoveRect.top = view.getCenter().y - view.getSize().y / 3.0f;
 	camMoveRect.width = view.getSize().x / 3.0f;
 	camMoveRect.height = view.getSize().y / 3.0f;
-	//(view.getCenter() - view.getSize() / 3.0f, view.getCenter + view.)
-	view.setCenter(man->GetPosition());
+
+	sf::View uiView = window.getDefaultView();
 
 	sf::Clock clock;
 	while (window.isOpen())
 	{
 		float dt = clock.restart().asSeconds();
-
-
 
 		// Poll events
 		sf::Event event;
@@ -161,59 +153,18 @@ int main(int argc, char** argv)
 
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 			{
-				window.close();
-			}
-
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
-			{
-				isActionReleased = true;
-				if (pItemActor)
+				if (!game.IsStarted())
 				{
-					FireEvent("PurchaseItem", pItemActor);
+					window.close();
 				}
 			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num1)
-			{
-				AddItemAttempt(g_customer, &blue_milk);
-			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num2)
-			{
-				AddItemAttempt(g_customer, &green_eggs);
-			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num3)
-			{
-				AddItemAttempt(g_customer, &white_meat);
-			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num4)
-			{
-				AddItemAttempt(g_customer, &red_candy);
-			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num5)
-			{
-				AddItemAttempt(g_customer, &blue_eggs);
-			}
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R)
-			{
-				gc = GroceryList();
-				gc.AddItem(blue_milk);
-				gc.AddItem(green_eggs);
-				gc.AddItem(white_meat);
-				gc.AddItem(red_candy);
 
-				delete g_customer;
-				g_customer = new Customer(gc, 1000);
-
-				PrintCustomer(g_customer);
+			if (event.type == sf::Event::KeyReleased)
+			{
+				game.OnKeyReleased(event.key.code);
 			}
 
-			// Skin swap test
-			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::S)
-			{
-				static short skin = 0;
-				skin = (skin + 1) % 4;
-				man->SetSkin(skin);
-			}
-			else if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
+			if(event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
 				sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), view);
@@ -231,54 +182,61 @@ int main(int argc, char** argv)
 		}
 
 		// Update actors
-		for (size_t i = 0; i < g_actors.size(); ++i)
+		g_currentLevelMap->Update(dt);
+		for (auto itr = g_uiMaps.begin(); itr != g_uiMaps.end(); ++itr)
 		{
-			g_actors[i]->Update(dt);
+			itr->second->Update(dt);
 		}
 
-		sf::IntRect manRect = man->GetRect();
-		bool bSet = false;
-		if (manRect.left < camMoveRect.left)
+		Player* player = g_currentLevelMap->GetPlayer();
+		if (player)
 		{
-			camMoveRect.left = manRect.left;
-			bSet = true;
-		}
-		if (manRect.top < camMoveRect.top)
-		{
-			camMoveRect.top = manRect.top;
-			bSet = true;
-		}
-		if (manRect.left + manRect.width > camMoveRect.left + camMoveRect.width)
-		{
-			camMoveRect.left = manRect.left + manRect.width - camMoveRect.width;
-			bSet = true;
-		}
-		if (manRect.top + manRect.height > camMoveRect.top + camMoveRect.height)
-		{
-			camMoveRect.top = manRect.top + manRect.height - camMoveRect.height;
-			bSet = true;
-		}
+			sf::IntRect manRect = player->GetRect();
+			bool bSet = false;
+			if (manRect.left < camMoveRect.left)
+			{
+				camMoveRect.left = manRect.left;
+				bSet = true;
+			}
+			if (manRect.top < camMoveRect.top)
+			{
+				camMoveRect.top = manRect.top;
+				bSet = true;
+			}
+			if (manRect.left + manRect.width > camMoveRect.left + camMoveRect.width)
+			{
+				camMoveRect.left = manRect.left + manRect.width - camMoveRect.width;
+				bSet = true;
+			}
+			if (manRect.top + manRect.height > camMoveRect.top + camMoveRect.height)
+			{
+				camMoveRect.top = manRect.top + manRect.height - camMoveRect.height;
+				bSet = true;
+			}
 
-		if (bSet)
-		{
-			// Round to nearest int to avoid artifacting with half pixels in tilemap
-			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
-			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
+			if (bSet)
+			{
+				// Round to nearest int to avoid artifacting with half pixels in tilemap
+				float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
+				float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
 
-			view.setCenter(x, y);
+				view.setCenter(x, y);
+			}
 		}
 
 
 		// Clear
 		window.clear(sf::Color(50, 75, 50));
 
-		// Set active camera
+		// Set active camera and  draw actors
 		window.setView(view);
+		g_currentLevelMap->Draw(window);
 
-		// Draw actors
-		for (size_t i = 0; i < g_actors.size(); ++i)
+		for (auto itr = g_uiMaps.begin(); itr != g_uiMaps.end(); ++itr)
 		{
-			g_actors[i]->Draw(window);
+			uiView.setCenter(itr->second->GetWidth() / 2, itr->second->GetHeight() / 2);
+			window.setView(uiView);
+			itr->second->Draw(window);
 		}
 
 		sf::Vertex verts[4];
@@ -308,14 +266,6 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
-		sf::Vector2i gridPos = man->GetGridNode()->grid_position;
-		sf::Vector2i pos;
-		pos.x = man->GetPosition().x;
-		pos.y = man->GetPosition().y;
-		DebugPrintf("GridPos: %dx%d\nPixPos: %d%d", gridPos.x, gridPos.y, pos.x, pos.y);
-		//if(showItem)
-		//	DebugPrintf("%s: %d", itemName.c_str(), cost);
-
 		// Debug text
 		window.setView(window.getDefaultView());
 		window.draw(g_debugTextBackground);
@@ -326,7 +276,6 @@ int main(int argc, char** argv)
 	}
 
 	delete g_defaultFont;
-	delete g_customer;
 
 	return 0;
 }

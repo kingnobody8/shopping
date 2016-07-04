@@ -1,8 +1,6 @@
 #pragma once
 #include "grid_entity.h"
 
-extern class ItemActor* pItemActor;
-
 class CharacterController;
 class Character : public GridEntity
 {

@@ -241,15 +241,21 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 					{
 						std::string szSpawnType = propSet.GetStringProperty("spawn_type");
 						GridEntity* pGridEntity = CreateSpawnTile(x, y, layerId, pLayer, szSpawnType);
-						m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pGridEntity;
-						m_vActors.push_back(pGridEntity);
+						if (pGridEntity != nullptr)
+						{
+							m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pGridEntity;
+							m_vActors.push_back(pGridEntity);
+						}
 					}
 				}
 				else
 				{
 					TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
-					m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pTileActor;
-					m_vActors.push_back(pTileActor);
+					if (pTileActor != nullptr)
+					{
+						m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pTileActor;
+						m_vActors.push_back(pTileActor);
+					}
 				}
 			}
 		}
