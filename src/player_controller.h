@@ -15,5 +15,7 @@ private:
 	void CheckKey(sf::Keyboard::Key key, int i, float dt);
 
 	Character* m_player;
-	float m_keyTimes[Character::CharacterDirection::Count];
+	float m_keyTimes[GridEntity::EDirection::ED_COUNT];
+
+	bool m_bIsInputDisabled;
 };

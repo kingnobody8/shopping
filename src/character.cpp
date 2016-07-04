@@ -12,6 +12,8 @@ static const int SKIN_COUNT = SKIN_ROW * SKIN_COL;
 static const int SKIN_STEP_X = 3 * FRAME_WIDTH;
 static const int SKIN_STEP_Y = 4 * FRAME_HEIGHT;
 
+static const float MOVE_TIME = 0.32f;
+
 static int s_characterFrameMapping[][4][2] =
 {
 	// North
@@ -126,11 +128,13 @@ Character::Character()
 	, m_speed(32.0f)
 	, m_controller(nullptr)
 	, m_speedMultiplier(1.0f)
+	, m_fMoveTimer(-1.0f)
+	, m_eMoveDir(EDirection::ED_INVALID)
 {
 	LoadTexture("assets/textures/characters.png", m_texture);
 	m_sprite.setTexture(m_texture);
 
-	SetFacing(CharacterDirection::North);
+	SetFacing(EDirection::ED_NORTH);
 }
 
 Character::~Character()
@@ -140,15 +144,13 @@ Character::~Character()
 
 void Character::Update(float dt)
 {
+	MoveUpdatePreInput(dt);
 	m_controller->Update(dt);
+	MoveUpdatePostInput(dt);
 
-	//m_sprite.move(m_velocity);
-
-	ApplyMotion(m_velocity);
-
-	if (m_velocity.x == 0 && m_velocity.y == 0)
+	if (!IsMoving())
 	{
-		m_frame = 1;
+		//m_frame = 1;
 		SetFacing(m_facing);
 	}
 	else
@@ -162,30 +164,119 @@ void Character::Update(float dt)
 			{
 				m_frame = 0;
 			}
+			SetFacing(m_facing);
 		}
 	}
 }
 
-void Character::SetFacing(CharacterDirection direction)
+void Character::Draw(sf::RenderWindow& window)
+{
+	GridEntity::Draw(window);
+
+	sf::IntRect rect = GetRect();
+
+	sf::VertexArray verts;
+	verts.resize(5);
+	verts[0].position.x = rect.left;
+	verts[0].position.y = rect.top;
+	verts[1].position.x = rect.left + rect.width;
+	verts[1].position.y = rect.top;
+	verts[2].position.x = rect.left + rect.width;
+	verts[2].position.y = rect.top + rect.height;
+	verts[3].position.x = rect.left;
+	verts[3].position.y = rect.top + rect.height;
+	verts[4].position.x = rect.left;
+	verts[4].position.y = rect.top;
+
+	for (size_t i = 0; i < verts.getVertexCount(); ++i)
+	{
+		verts[i].color = sf::Color::Black;
+	}
+
+	window.draw(&verts[0], verts.getVertexCount(), sf::PrimitiveType::LinesStrip);
+}
+
+/*virtual*/ void Character::Move(const EDirection& eDir)
+{
+	m_oldPos = m_pGridNode->position;
+	GridEntity::Move(eDir);
+
+	//if (IsMoving()) //only allow movement changes in the opposite direction while we are moving
+	//{
+	//	if ((m_eMoveDir == North || m_eMoveDir == South) && !(eDir == North || eDir == South))
+	//	{
+	//		return;
+	//	}
+	//	else if ((m_eMoveDir == East || m_eMoveDir == West) && !(eDir == East || eDir == West))
+	//	{
+	//		return;
+	//	}
+	//}
+
+	SetFacing(eDir);
+	m_fMoveTimer = MOVE_TIME;
+	m_eMoveDir = eDir;
+	//AlignPositionToNode();
+}
+
+void Character::SetFacing(EDirection direction)
 {
 	m_sprite.setTextureRect(s_characterFrames[m_skin][direction][m_frame]);
 	m_facing = direction;
 }
 
-void Character::Move(int x, int y, float dt)
+void Character::MoveUpdatePreInput(float dt)
 {
-	m_velocity.x = x * m_speed * dt * m_speedMultiplier;
-	m_velocity.y = y * m_speed * dt * m_speedMultiplier;
+	m_bMoveMarker = false;
 
-	if (x != 0)
+	if (m_fMoveTimer < 0)
+		return;
+
+	m_fMoveTimer -= dt;
+
+	if (m_fMoveTimer < 0)
 	{
-		SetFacing(x < 0 ? CharacterDirection::West : CharacterDirection::East);
+		m_bMoveMarker = true;
+		m_fMoveTimer = -1.0f;
+		m_eMoveDir = GridEntity::EDirection::ED_INVALID;
+		AlignPositionToNode();
+		return;
 	}
-	else if (y != 0)
+
+	float lerp = (MOVE_TIME - m_fMoveTimer) / MOVE_TIME;
+	sf::Vector2i lerpPos;
+	lerpPos.x = m_oldPos.x + lerp * (m_pGridNode->position.x - m_oldPos.x);
+	lerpPos.y = m_oldPos.y + lerp * (m_pGridNode->position.y - m_oldPos.y);
+
+	sf::IntRect rect = GetRect();
+	SetPosition(sf::Vector2f(lerpPos.x - rect.width / 2, lerpPos.y - rect.height / 2));
+
+}
+
+
+void Character::MoveUpdatePostInput(float dt)
+{
+	if (m_bMoveMarker && m_fMoveTimer < 0)
 	{
-		SetFacing(y < 0 ? CharacterDirection::North : CharacterDirection::South);
+		m_frame = 1;
+		SetFacing(m_facing);
 	}
 }
+
+//void Character::Move(int x, int y, float dt)
+//{
+//	m_velocity.x = x * m_speed * dt * m_speedMultiplier;
+//	m_velocity.y = y * m_speed * dt * m_speedMultiplier;
+//
+//	if (x != 0)
+//	{
+//		SetFacing(x < 0 ? CharacterDirection::West : CharacterDirection::East);
+//	}
+//	else if (y != 0)
+//	{
+//		SetFacing(y < 0 ? CharacterDirection::North : CharacterDirection::South);
+//	}
+//}
 
 void Character::SetSkin(short skin)
 {
@@ -284,9 +375,9 @@ bool Character::ValidatePosition(float x, float y)
 	//TODO (daniel) make sprite have actual hitbox
 
 	sf::IntRect rect = SpriteActor::GetRect();
-	rect.left += 8;
-	rect.top += 16;
-	rect.width -= 16;
-	rect.height -= 16;
+	//rect.left += 8;
+	//rect.top += 16;
+	//rect.width -= 16;
+	//rect.height -= 16;
 	return rect;
 }

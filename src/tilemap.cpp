@@ -48,7 +48,7 @@ bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
 
 	//create actors for all layers
 	const std::vector<Tmx::Layer*>& vLayer = m_pMap->GetLayers();
-	m_vTileLayerGrid.resize(vLayer.size());
+	m_vLayerData.resize(vLayer.size());
 	for (size_t i = 0; i < vLayer.size(); ++i)
 	{
 		Tmx::Layer* pLayer = vLayer[i];
@@ -71,16 +71,12 @@ void TileMap::Exit()
 	}
 	m_vTilesetTexture.clear();
 
-	for (size_t i = 0; i < m_vTileLayerGrid.size(); ++i)
+	for (size_t i = 0; i < m_vActors.size(); ++i)
 	{
-		for (size_t j = 0; j < m_vTileLayerGrid[i].size(); ++j)
-		{
-			delete m_vTileLayerGrid[i][j];
-		}
-		m_vTileLayerGrid[i].clear();
+		delete m_vActors[i];
 	}
-	m_vTileLayerGrid.clear();
 	m_vActors.clear();
+	m_vLayerData.clear();
 
 	delete m_pMap;
 	m_pMap = nullptr;
@@ -134,7 +130,7 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 						sf::IntRect collisionRect(x * pTileset->GetTileWidth(), y * pTileset->GetTileHeight(), width, height);
 						if (collisionRect.intersects(rect))
 						{
-							Actor* pActor = m_vTileLayerGrid[ilayer][index];
+							Actor* pActor = m_vLayerData[ilayer].m_vNodes[x][y].pGridEntity;
 							ret.push_back(pActor);
 						}
 					}
@@ -143,17 +139,17 @@ std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
 		}
 	}
 
-	for (size_t i = 0; i < m_vObjectActors.size(); ++i)
-	{
-		//TODO (daniel) for now assume all objects are items
-		ItemActor* pItemActor = static_cast<ItemActor*>(m_vObjectActors[i]);
+	//for (size_t i = 0; i < m_vObjectActors.size(); ++i)
+	//{
+	//	//TODO (daniel) for now assume all objects are items
+	//	ItemActor* pItemActor = static_cast<ItemActor*>(m_vObjectActors[i]);
 
-		sf::IntRect collisionRect = pItemActor->GetRect();
-		if (collisionRect.intersects(rect))
-		{
-			ret.push_back(pItemActor);
-		}
-	}
+	//	sf::IntRect collisionRect = pItemActor->GetRect();
+	//	if (collisionRect.intersects(rect))
+	//	{
+	//		ret.push_back(pItemActor);
+	//	}
+	//}
 
 	return ret;
 }
@@ -180,14 +176,7 @@ int TileMap::GetHeight() const
 
 Actor* TileMap::GetTileActorAt(int x, int y, int layer) const
 {
-	const Tmx::TileLayer* tileLayer = m_pMap->GetTileLayer(layer);
-	int width = tileLayer->GetWidth();
-	int index = y * width + x;
-	if (index >= 0 && index < (int) m_vTileLayerGrid[layer].size())
-	{
-		return m_vTileLayerGrid[layer][index];
-	}
-	return nullptr;
+	return m_vLayerData[layer].m_vNodes[x][y].pGridEntity;
 }
 
 void TileMap::Update(float dt)
@@ -200,16 +189,10 @@ void TileMap::Update(float dt)
 
 void TileMap::Draw(sf::RenderWindow& window)
 {
-	for (size_t i = 0; i < m_vTileLayerGrid.size(); ++i)
+	for (size_t i = 0; i < m_vActors.size(); ++i)
 	{
-		for (size_t j = 0; j < m_vTileLayerGrid[i].size(); ++j)
-		{
-			Actor* actor = m_vTileLayerGrid[i][j];
-			if (actor)
-			{
-				actor->Draw(window);
-			}
-		}
+		Actor* pActor = m_vActors[i];
+		pActor->Draw(window);
 	}
 }
 
@@ -220,13 +203,21 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId)
 {
 	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
-	m_vTileLayerGrid[layerId].resize(vObject.size());
+	m_vLayerData[layerId].m_vObjects.resize(vObject.size());
 	for (size_t i = 0; i < vObject.size(); ++i)
 	{
 		Tmx::Object* pObject = vObject[i];
 		Actor* actor = CreateObjectActor(pObject);
-		m_vTileLayerGrid[layerId][i] = actor;
-		m_vActors.push_back(actor);
+		if (actor != nullptr)
+		{
+			m_vLayerData[layerId].m_vObjects[i] = actor;
+			m_vActors.push_back(actor);
+		}
+		else
+		{
+			printf("error: cannot create object: %s\n", pObject->GetName().c_str());
+		}
+		
 	}
 }
 
@@ -235,18 +226,45 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 	int width = pLayer->GetWidth();
 	int height = pLayer->GetHeight();
 
-	m_vTileLayerGrid[layerId].resize(width * height);
+	m_vLayerData[layerId].SetGridSize(width, height);
 	for (int x = 0; x < width; ++x)
 	{
 		for (int y = 0; y < height; ++y)
 		{
-			int index = y * width + x;
-			m_vTileLayerGrid[layerId][index] = nullptr;
-
+			m_vLayerData[layerId].m_vNodes[x][y].grid_position = sf::Vector2i(x, y);
+			m_vLayerData[layerId].m_vNodes[x][y].position = sf::Vector2i(x * m_pMap->GetTileWidth() + m_pMap->GetTileWidth() / 2, y * m_pMap->GetTileHeight() + m_pMap->GetTileHeight() / 2);
 			if (pLayer->GetTileTilesetIndex(x, y) != -1) //TODO (daniel) for now all tiles are default tiles, they only render
 			{
-				TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
-				m_vTileLayerGrid[layerId][index] = pTileActor;
+				assert(m_vLayerData[layerId].m_vNodes[x][y].pGridEntity == nullptr); //two grid entities can't be on the same node!
+
+				int tileId = pLayer->GetTileId(x, y);
+				int tilesetId = pLayer->GetTileTilesetIndex(x, y);
+				const Tmx::Tileset* pTileset = m_pMap->GetTileset(tilesetId);
+				const Tmx::Tile* pTile = pTileset->GetTile(tileId);
+				if (pTile != nullptr)
+				{
+					const Tmx::PropertySet& propSet = pTile->GetProperties();
+
+					if (propSet.HasProperty("spawn_type"))
+					{
+						std::string szSpawnType = propSet.GetStringProperty("spawn_type");
+						GridEntity* pGridEntity = CreateSpawnTile(x, y, layerId, pLayer, szSpawnType);
+						if (pGridEntity != nullptr)
+						{
+							m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pGridEntity;
+							m_vActors.push_back(pGridEntity);
+						}
+					}
+				}
+				else
+				{
+					TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
+					if (pTileActor != nullptr)
+					{
+						m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pTileActor;
+						m_vActors.push_back(pTileActor);
+					}
+				}
 			}
 		}
 	}
@@ -256,38 +274,71 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 {
 	std::string type = pObject->GetType();
 	Actor* actor = nullptr;
-	if (type == "Spawn")
-	{
-		const Tmx::PropertySet& props = pObject->GetProperties();
-		std::string spawnEntity = props.GetStringProperty("Entity");
-		SpriteActor* spawned = nullptr;
+	//if (type == "Spawn")
+	//{
+	//	const Tmx::PropertySet& props = pObject->GetProperties();
+	//	std::string spawnEntity = props.GetStringProperty("Entity");
+	//	SpriteActor* spawned = nullptr;
+	//
+	//	if (spawnEntity == "Player")
+	//	{
+	//		assert(m_pPlayer == nullptr);
+	//		m_pPlayer = CreateActor<Player>();
+	//		spawned = m_pPlayer;
+	//	}
+	//	else if (spawnEntity == "Shopper")
+	//	{
+	//		spawned = CreateActor<Shopper>();
+	//	}
+	//
+	//	if (spawned)
+	//	{
+	//		sf::IntRect rect = spawned->GetRect();
+	//		spawned->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+	//		actor = spawned;
+	//	}
+	//}
+	//else if (type == "ItemCollider")
+	//{
+	//	ItemActor* itemActor = new ItemActor();
+	//	itemActor->Init(pObject);
+	//	//ItemActor* itemActor = new ItemActor();
+		//itemActor->Init(pObject);
+		//m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
+		//return itemActor;
+	//}
+	//if (type == "Spawn")
+	//{
+	//	const Tmx::PropertySet& props = pObject->GetProperties();
+	//	std::string spawnEntity = props.GetStringProperty("Entity");
+	//	SpriteActor* spawned = nullptr;
 
-		if (spawnEntity == "Player")
-		{
-			assert(m_pPlayer == nullptr);
-			m_pPlayer = CreateActor<Player>();
-			spawned = m_pPlayer;
-		}
-		else if (spawnEntity == "Shopper")
-		{
-			spawned = CreateActor<Shopper>();
-		}
+	//	if (spawnEntity == "Player")
+	//	{
+	//		assert(m_pPlayer == nullptr);
+	//		m_pPlayer = CreateActor<Player>();
+	//		spawned = m_pPlayer;
+	//	}
+	//	else if (spawnEntity == "Shopper")
+	//	{
+	//		spawned = CreateActor<Shopper>();
+	//	}
 
-		if (spawned)
-		{
-			sf::IntRect rect = spawned->GetRect();
-			spawned->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
-			actor = spawned;
-		}
-	}
-	else if (type == "ItemCollider")
-	{
-		ItemActor* itemActor = new ItemActor();
-		itemActor->Init(pObject);
-		m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
-		actor = itemActor;
-	}
-	else if (type == "Text")
+	//	if (spawned)
+	//	{
+	//		sf::IntRect rect = spawned->GetRect();
+	//		spawned->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+	//		actor = spawned;
+	//	}
+	//}
+	//else if (type == "ItemCollider")
+	//{
+	//	ItemActor* itemActor = new ItemActor();
+	//	itemActor->Init(pObject);
+	//	m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
+	//	actor = itemActor;
+	//}
+	if (type == "Text")
 	{
 		const Tmx::PropertySet& props = pObject->GetProperties();
 		std::string text = props.GetStringProperty("Text");
@@ -336,12 +387,45 @@ TileActor* TileMap::CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileL
 	int tilesetId = pTileLayer->GetTileTilesetIndex(x, y);
 
 	sf::IntRect rect = CreateTileTextureRect(tileId, tilesetId);
+	const Tmx::Tileset* pTileset = m_pMap->GetTileset(tilesetId);
+	const Tmx::Tile* pTile = pTileset->GetTile(tileId);
 
 	sf::Texture* pTexture = m_vTilesetTexture[tilesetId];
 	TileActor* pTileActor = CreateActor<TileActor>();
 	pTileActor->SetTexture(pTexture);
 	pTileActor->SetTextureRect(rect);
-	pTileActor->SetPosition(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight());
+	pTileActor->SetPosition(sf::Vector2f(x * m_pMap->GetTileWidth(), y * m_pMap->GetTileHeight()));
 
 	return pTileActor;
+}
+
+GridEntity* TileMap::CreateSpawnTile(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szSpawnType)
+{
+	GridEntity* spawn = nullptr;
+	if (szSpawnType == "player")
+	{
+		assert(m_pPlayer == nullptr);
+		m_pPlayer = CreateActor<Player>();
+		spawn = m_pPlayer;
+	}
+	else if (szSpawnType == "shopper")
+	{
+
+	}
+
+	if (spawn)
+	{
+		int width = m_pMap->GetTileWidth();
+		int height = m_pMap->GetTileHeight();
+		sf::IntRect rect = spawn->GetRect();
+		spawn->SetPosition(sf::Vector2f(x * width + width / 2.0f - rect.width / 2.0f, y * height + height / 2.0f - rect.height / 2.0f));
+
+		GridNode* pGridNode = &m_vLayerData[layerId].m_vNodes[x][y];
+		assert(pGridNode->pGridEntity == nullptr); //can't have two grid entites on the same node
+		pGridNode->pGridEntity = spawn;
+		spawn->SetGridNode(pGridNode, layerId);
+		spawn->AlignPositionToNode();
+	}
+
+	return spawn;
 }

@@ -191,6 +191,7 @@
     <ClCompile Include="..\..\src\customer.cpp" />
     <ClCompile Include="..\..\src\debug_text.cpp" />
     <ClCompile Include="..\..\src\event.cpp" />
+    <ClCompile Include="..\..\src\grid_entity.cpp" />
     <ClCompile Include="..\..\src\game.cpp" />
     <ClCompile Include="..\..\src\grocery_list.cpp" />
     <ClCompile Include="..\..\src\item.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="..\..\src\event.h" />
     <ClInclude Include="..\..\src\game.h" />
     <ClInclude Include="..\..\src\gfx_util.h" />
+    <ClInclude Include="..\..\src\grid_entity.h" />
     <ClInclude Include="..\..\src\grocery_list.h" />
     <ClInclude Include="..\..\src\item.h" />
     <ClInclude Include="..\..\src\item_actor.h" />

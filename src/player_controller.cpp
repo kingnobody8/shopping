@@ -11,6 +11,7 @@ static sf::Vector2i s_characterDeltas[] =
 
 PlayerController::PlayerController(Character* player)
 	: m_player(player)
+	, m_bIsInputDisabled(false)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -23,33 +24,47 @@ PlayerController::~PlayerController()
 
 void PlayerController::Update(float dt)
 {
-	CheckKey(sf::Keyboard::Left, Character::CharacterDirection::West, dt);
-	CheckKey(sf::Keyboard::Right, Character::CharacterDirection::East, dt);
-	CheckKey(sf::Keyboard::Up, Character::CharacterDirection::North, dt);
-	CheckKey(sf::Keyboard::Down, Character::CharacterDirection::South, dt);
-
-	float best = 10000.0f;
-	int b = Character::CharacterDirection::Count;
-	for (int i = 0; i < Character::CharacterDirection::Count; ++i)
+	if (!m_bIsInputDisabled)
 	{
-		if (m_keyTimes[i] > 0 && m_keyTimes[i] < best)
+		CheckKey(sf::Keyboard::Left, GridEntity::EDirection::ED_WEST, dt);
+		CheckKey(sf::Keyboard::Right, GridEntity::EDirection::ED_EAST, dt);
+		CheckKey(sf::Keyboard::Up, GridEntity::EDirection::ED_NORTH, dt);
+		CheckKey(sf::Keyboard::Down, GridEntity::EDirection::ED_SOUTH, dt);
+
+		float best = 10000.0f;
+		int b = GridEntity::EDirection::ED_COUNT;
+		for (int i = 0; i < GridEntity::EDirection::ED_COUNT; ++i)
 		{
-			best = m_keyTimes[i];
-			b = i;
+			if (m_keyTimes[i] > 0 && m_keyTimes[i] < best)
+			{
+				best = m_keyTimes[i];
+				b = i;
+			}
+		}
+
+		// Hack to run fast (for testing)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		{
+			m_player->m_speedMultiplier = 10;
+		}
+		else
+		{
+			m_player->m_speedMultiplier = 1;
+		}
+
+		if (!m_player->IsMoving() && b > GridEntity::EDirection::ED_INVALID && b < GridEntity::EDirection::ED_COUNT)
+		{
+			GridEntity::EDirection eDir = GridEntity::EDirection(b);
+			if (m_player->CanMove(eDir))
+			{
+				m_player->Move(GridEntity::EDirection(b));
+			}
+			else
+			{
+				m_player->SetFacing(eDir);
+			}
 		}
 	}
-
-	// Hack to run fast (for testing)
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-	{
-		m_player->m_speedMultiplier = 10;
-	}
-	else
-	{
-		m_player->m_speedMultiplier = 1;
-	}
-
-	m_player->Move(s_characterDeltas[b].x, s_characterDeltas[b].y, dt);
 }
 
 void PlayerController::CheckKey(sf::Keyboard::Key key, int i, float dt)
@@ -63,3 +78,4 @@ void PlayerController::CheckKey(sf::Keyboard::Key key, int i, float dt)
 		m_keyTimes[i] = 0;
 	}
 }
+
