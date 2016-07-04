@@ -165,8 +165,8 @@ void Game::EndGame()
 			itemText->m_text.setString(buffer);
 		}
 
-		float timeFactor = m_timeRemaining / (float) m_targetTime;
-		float moneyFactor = m_player.GetMunny() / (float) m_targetMoney;
+		float timeFactor = std::min(1.0f, m_timeRemaining / (float) m_targetTime);
+		float moneyFactor = std::min(1.0f, m_player.GetMunny() / (float) m_targetMoney);
 		float itemFactor = gc.GetNumberOfCheckedItems() / (float) gc.GetTotalItems();
 		float factor = (timeFactor + moneyFactor + itemFactor) / 3.0f;
 		int score = (int) (1000000 * factor);
