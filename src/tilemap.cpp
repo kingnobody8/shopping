@@ -2,6 +2,7 @@
 #include "gfx_util.h"
 #include "player.h"
 #include "shopper.h"
+#include "text_actor.h"
 #include <assert.h>
 
 
@@ -11,9 +12,14 @@ TileMap::TileMap()
 {
 }
 
+TileMap::~TileMap()
+{
+}
 
 bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
 {
+	Exit();
+
 	m_pItemManager = m_pItemManager;
 
 	//load map
@@ -49,7 +55,7 @@ bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
 		switch (pLayer->GetLayerType())
 		{
 		case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:	SetupImageLayer(static_cast<Tmx::ImageLayer*>(pLayer));	break;
-		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer)); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), i); break;
 		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i); break;
 		}
 	}
@@ -65,10 +71,17 @@ void TileMap::Exit()
 	}
 	m_vTilesetTexture.clear();
 
-	//TODO (daniel) remove all actors created from the tilemap
+	for (size_t i = 0; i < m_vActors.size(); ++i)
+	{
+		delete m_vActors[i];
+	}
+	m_vActors.clear();
+	m_vLayerData.clear();
 
 	delete m_pMap;
 	m_pMap = nullptr;
+
+	m_pPlayer = nullptr;
 }
 
 std::vector<Actor*> TileMap::PerformCollisionTest(const sf::IntRect& rect)
@@ -151,24 +164,53 @@ int TileMap::GetTileHeight() const
 	return m_pMap->GetTileHeight();
 }
 
+int TileMap::GetWidth() const
+{
+	return m_pMap->GetWidth() * m_pMap->GetTileWidth();
+}
+
+int TileMap::GetHeight() const
+{
+	return m_pMap->GetHeight() * m_pMap->GetTileHeight();
+}
+
 Actor* TileMap::GetTileActorAt(int x, int y, int layer) const
 {
 	return m_vLayerData[layer].m_vNodes[x][y].pGridEntity;
 }
 
+void TileMap::Update(float dt)
+{
+	for (size_t i = 0; i < m_vActors.size(); ++i)
+	{
+		m_vActors[i]->Update(dt);
+	}
+}
+
+void TileMap::Draw(sf::RenderWindow& window)
+{
+	for (size_t i = 0; i < m_vActors.size(); ++i)
+	{
+		Actor* pActor = m_vActors[i];
+		pActor->Draw(window);
+	}
+}
 
 void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer) 
 {
 }
 
-void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer)
+void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId)
 {
-	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
-	for (size_t i = 0; i < vObject.size(); ++i)
-	{
-		Tmx::Object* pObject = vObject[i];
-		CreateObjectActor(pObject);
-	}
+	//const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
+	//m_vLayerData[layerId].m_vObjects.resize(vObject.size());
+	//for (size_t i = 0; i < vObject.size(); ++i)
+	//{
+	//	Tmx::Object* pObject = vObject[i];
+	//	Actor* actor = CreateObjectActor(pObject);
+	//	m_vLayerData[layerId].m_vObjects[i] = actor;
+	//	m_vActors.push_back(actor);
+	//}
 }
 
 void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
@@ -200,12 +242,14 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 						std::string szSpawnType = propSet.GetStringProperty("spawn_type");
 						GridEntity* pGridEntity = CreateSpawnTile(x, y, layerId, pLayer, szSpawnType);
 						m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pGridEntity;
+						m_vActors.push_back(pGridEntity);
 					}
 				}
 				else
 				{
 					TileActor* pTileActor = CreateDefaultTile(x, y, pLayer);
 					m_vLayerData[layerId].m_vNodes[x][y].pGridEntity = pTileActor;
+					m_vActors.push_back(pTileActor);
 				}
 			}
 		}
@@ -248,6 +292,60 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 		//itemActor->Init(pObject);
 		//m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
 		//return itemActor;
+	//}
+	//if (type == "Spawn")
+	//{
+	//	const Tmx::PropertySet& props = pObject->GetProperties();
+	//	std::string spawnEntity = props.GetStringProperty("Entity");
+	//	SpriteActor* spawned = nullptr;
+
+	//	if (spawnEntity == "Player")
+	//	{
+	//		assert(m_pPlayer == nullptr);
+	//		m_pPlayer = CreateActor<Player>();
+	//		spawned = m_pPlayer;
+	//	}
+	//	else if (spawnEntity == "Shopper")
+	//	{
+	//		spawned = CreateActor<Shopper>();
+	//	}
+
+	//	if (spawned)
+	//	{
+	//		sf::IntRect rect = spawned->GetRect();
+	//		spawned->SetPosition(sf::Vector2f(pObject->GetX() + pObject->GetWidth() / 2.0f - rect.width / 2.0f, pObject->GetY() + pObject->GetHeight() / 2.0f - rect.height / 2.0f));
+	//		actor = spawned;
+	//	}
+	//}
+	//else if (type == "ItemCollider")
+	//{
+	//	ItemActor* itemActor = new ItemActor();
+	//	itemActor->Init(pObject);
+	//	m_vObjectActors.push_back(itemActor); //TODO (daniel) remove this when we have handling for multiple object types
+	//	actor = itemActor;
+	//}
+	//else if (type == "Text")
+	//{
+	//	const Tmx::PropertySet& props = pObject->GetProperties();
+	//	std::string text = props.GetStringProperty("Text");
+
+	//	TextActor* textActor = CreateActor<TextActor>();
+	//	textActor->m_text.setString(text);
+	//	textActor->m_text.setPosition(pObject->GetX(), pObject->GetY());
+
+	//	int size = props.GetIntProperty("Size", textActor->m_text.getCharacterSize());
+	//	textActor->m_text.setCharacterSize(size);
+
+	//	std::string align = props.GetStringProperty("Align");
+	//	if (align == "Center")
+	//	{
+	//		sf::FloatRect bounds = textActor->m_text.getLocalBounds();
+	//		textActor->m_text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
+
+	//		textActor->m_text.move(pObject->GetWidth() / 2.0f, pObject->GetHeight() / 2.0f);
+	//	}
+
+	//	actor = textActor;
 	//}
 
 	return actor;

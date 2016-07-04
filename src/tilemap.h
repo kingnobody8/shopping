@@ -30,9 +30,11 @@ struct LayerData
 {
 	GridNode m_vNodes[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	std::vector<Actor*> m_vObjects;
+	sf::Vector2i m_gridSize;
 
-	LayerData() //TODO (daniel) come back here and fix setting the null edges
+	LayerData()
 		: m_vNodes{ {},{} }
+		, m_gridSize(MAX_GRID_SIZE, MAX_GRID_SIZE)
 	{
 		for (int x = 0; x < MAX_GRID_SIZE; ++x)
 		{
@@ -62,6 +64,7 @@ struct LayerData
 	void SetGridSize(const int& width, const int& height) //TODO (daniel) come back here and fix setting the null edges
 	{
 		assert(width > 0 && width <= MAX_GRID_SIZE && height > 0 && height <= MAX_GRID_SIZE);
+		m_gridSize = sf::Vector2i(width, height);
 
 		for (int x = 0; x < MAX_GRID_SIZE; ++x)
 		{
@@ -92,10 +95,13 @@ struct LayerData
 };
 
 const class TileMap& GetCurrentMap();
+bool LoadMap(const std::string& mapPath, const std::string& view);
+
 class TileMap
 {
 public:
 	TileMap();
+	~TileMap();
 
 	bool Init(const std::string& szMapPath, ItemManager* pItemManager);
 	void Exit();
@@ -107,11 +113,17 @@ public:
 	int GetTileWidth() const;
 	int GetTileHeight() const;
 
+	int GetWidth() const;
+	int GetHeight() const;
+
 	Actor* GetTileActorAt(int x, int y, int layer) const;
+
+	void Update(float dt);
+	void Draw(sf::RenderWindow& window);
 
 private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);
-	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer);
+	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId);
 	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId);
 	Actor* CreateObjectActor(Tmx::Object* pObject);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
@@ -121,8 +133,8 @@ private:
 private:
 	Tmx::Map* m_pMap;
 	std::vector<sf::Texture*> m_vTilesetTexture;
-	std::vector<Actor*> m_vActors;
-	std::vector<LayerData> m_vLayerData;
+	std::vector<Actor*> m_vActors;			//list of all actors instantiated during map load
+	std::vector<LayerData> m_vLayerData;	//list of layers with grid data
 
 	ItemManager* m_pItemManager;
 	Player* m_pPlayer;
