@@ -114,8 +114,14 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-	std::vector<GridEntity*> GetGridEntitiesAtTilePos(const int& x, const int& y) const;
 	GridEntity* GetGridEntityAtTilePos(const int& layerId, const int& x, const int& y) const;
+	std::vector<GridEntity*> GetGridEntitiesAtTilePos(const int& x, const int& y) const;
+	Actor* FindActorByName(const std::string& name) const;
+	template<typename TActor>
+	TActor* FindActorByName(const std::string& name) const
+	{
+		return static_cast<TActor*>(FindActorByName(name));
+	}
 
 	void Update(float dt);
 	void Draw(sf::RenderWindow& window);
