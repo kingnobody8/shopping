@@ -103,7 +103,7 @@ public:
 	TileMap();
 	~TileMap();
 
-	bool Init(const std::string& szMapPath, ItemManager* pItemManager);
+	bool Init(const std::string& szMapPath, ItemManager* pItemManager, sf::View* view);
 	void Exit();
 
 	inline Player* GetPlayer() const { return m_pPlayer; }
@@ -128,9 +128,9 @@ public:
 
 private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);
-	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId);
+	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId, sf::View* view);
 	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId);
-	Actor* CreateObjectActor(Tmx::Object* pObject);
+	Actor* CreateObjectActor(Tmx::Object* pObject, sf::View* view);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
 	TileActor* CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer);
 	GridEntity* CreateSpawnTile(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szSpawnType);

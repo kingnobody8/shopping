@@ -121,6 +121,11 @@
     <ClCompile Include="..\..\lib\zlib\trees.c">
       <Filter>zlib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\src\button.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\lib\zlib\uncompr.c">
       <Filter>zlib</Filter>
     </ClCompile>
@@ -246,7 +251,69 @@
       <Filter>zlib</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lib\zlib\zutil.h">
-      <Filter>zlib</Filter>
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\crc32.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\deflate.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\gzguts.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\zlib\inffast.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sprite_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tile_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\text_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\debug_text.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tilemap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\character.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player_controller.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\character_controller.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\item_actor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\item_manager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shopper_controller.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shopper.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grid_entity.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game.h">
+    </ClInclude>
+    <ClInclude Include="..\..\src\button.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\button.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

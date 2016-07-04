@@ -4,6 +4,7 @@
 
 /build
 /project/.vs/shopping/v14
+/project/shopping.VC.db
 *.opendb
 *.sdf
 *.user

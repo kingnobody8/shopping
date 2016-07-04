@@ -1,17 +1,25 @@
 #include "button.h"
 
-Button* CreateButton()
+Button* CreateButton(Actor *actor, sf::View *view, const std::string& event)
 {
-	Button* button = new Button();
+	Button* button = new Button(actor, view, event);
 	RegisterButton(button);
 	return button;
 }
 
 Button::Button()
-    : m_spriteActor(nullptr),
+    : m_actor(nullptr),
+    m_view(nullptr),
     m_event("")
 {
     this->Reset();
+}
+
+Button::Button(Actor *actor, sf::View *view, const std::string& event)
+	: m_actor(actor),
+	m_view(view),
+	m_event(event)
+{
 }
 
 Button::~Button()
@@ -29,22 +37,27 @@ void Button::Reset()
 	this->m_event = "";
 }
 
-void Button::SetEvent(const std::string& event, EventCallback callback)
+void Button::SetEvent(const std::string& event)
 {
     this->m_event = event;
-	RegisterEvent(event, callback);
 }
 
-void Button::SetSpriteActor(SpriteActor *spriteActor)
+void Button::SetActor(Actor *actor)
 {
-	this->m_spriteActor = spriteActor;
+	this->m_actor = actor;
 }
 
-void Button::CheckMousePress(const sf::Vector2f mouse) const
+void Button::SetView(sf::View *view)
 {
-	// button should have a sprite when checking for collisisions
-	assert(this->m_spriteActor != nullptr);
-    if(!this->CanFire() || !this->m_spriteActor->GetRect().contains(mouse.x, mouse.y))
+    this->m_view = view;
+}
+
+void Button::CheckMousePress(const sf::Event::MouseButtonEvent& mbe, sf::RenderWindow& window) const
+{
+	sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), *this->m_view);
+	// button should have an actor when checking for collisisions
+	assert(this->m_actor != nullptr);
+    if(!this->CanFire() || !this->m_actor->GetRect().contains(vec.x, vec.y))
     {
         return;
     }

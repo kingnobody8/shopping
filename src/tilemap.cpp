@@ -1,3 +1,4 @@
+#include "button.h"
 #include "tilemap.h"
 #include "gfx_util.h"
 #include "player.h"
@@ -16,7 +17,7 @@ TileMap::~TileMap()
 {
 }
 
-bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
+bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager, sf::View* view)
 {
 	Exit();
 
@@ -55,7 +56,7 @@ bool TileMap::Init(const std::string& szMapPath, ItemManager* pTtemManager)
 		switch (pLayer->GetLayerType())
 		{
 		case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:	SetupImageLayer(static_cast<Tmx::ImageLayer*>(pLayer));	break;
-		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), i); break;
+		case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP: SetupObjectLayer(static_cast<Tmx::ObjectGroup*>(pLayer), i, view); break;
 		case Tmx::LayerType::TMX_LAYERTYPE_TILE: SetupTileLayer(static_cast<Tmx::TileLayer*>(pLayer), i); break;
 		}
 	}
@@ -154,14 +155,14 @@ void TileMap::SetupImageLayer(const Tmx::ImageLayer* pLayer)
 {
 }
 
-void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId)
+void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId, sf::View* view)
 {
 	const std::vector<Tmx::Object*>& vObject = pLayer->GetObjects();
 	m_vLayerData[layerId].m_vObjects.resize(vObject.size());
 	for (size_t i = 0; i < vObject.size(); ++i)
 	{
 		Tmx::Object* pObject = vObject[i];
-		Actor* actor = CreateObjectActor(pObject);
+		Actor* actor = CreateObjectActor(pObject, view);
 		if (actor != nullptr)
 		{
 			m_vLayerData[layerId].m_vObjects[i] = actor;
@@ -171,7 +172,6 @@ void TileMap::SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId)
 		{
 			printf("error: cannot create object: %s\n", pObject->GetName().c_str());
 		}
-
 	}
 }
 
@@ -234,9 +234,10 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 	}
 }
 
-Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
+Actor* TileMap::CreateObjectActor(Tmx::Object* pObject, sf::View* view)
 {
 	std::string type = pObject->GetType();
+	const Tmx::PropertySet& props = pObject->GetProperties();
 	Actor* actor = nullptr;
 	//if (type == "Spawn")
 	//{
@@ -304,7 +305,6 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 	//}
 	if (type == "Text")
 	{
-		const Tmx::PropertySet& props = pObject->GetProperties();
 		std::string text = props.GetStringProperty("Text");
 
 		TextActor* textActor = CreateActor<TextActor>();
@@ -317,18 +317,23 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject)
 		std::string align = props.GetStringProperty("Align");
 		if (align == "Center")
 		{
+			textActor->m_text.getGlobalBounds();
 			sf::FloatRect bounds = textActor->m_text.getLocalBounds();
 			textActor->m_text.setOrigin(bounds.left + bounds.width / 2.0f, bounds.top + bounds.height / 2.0f);
 
 			textActor->m_text.move(pObject->GetWidth() / 2.0f, pObject->GetHeight() / 2.0f);
 		}
-
 		actor = textActor;
 	}
 
 	if (actor)
 	{
 		actor->m_name = pObject->GetName();
+		if (props.HasProperty("Button"))
+		{
+			const std::string& eventName = props.GetStringProperty("Button");
+			CreateButton(actor, view, eventName);
+		}
 	}
 
 	return actor;
