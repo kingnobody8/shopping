@@ -181,6 +181,9 @@
     <ClCompile Include="..\..\src\shopper.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\grid_entity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -338,6 +341,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\shopper.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grid_entity.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

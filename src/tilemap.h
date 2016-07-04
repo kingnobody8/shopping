@@ -4,6 +4,88 @@
 #include <map>
 #include "player.h"
 #include "item_manager.h"
+#include <assert.h>
+
+const int MAX_GRID_SIZE = 128;
+
+//forward declare
+class GridEntity;
+
+struct GridNode
+{
+	GridNode* pUp;
+	GridNode* pDown;
+	GridNode* pLeft;
+	GridNode* pRight;
+
+	GridEntity* pGridEntity;
+
+	sf::Vector2i position;
+
+	GridNode() : pUp(nullptr), pDown(nullptr), pLeft(nullptr), pRight(nullptr), pGridEntity(nullptr) {}
+};
+
+struct LayerData
+{
+	GridNode m_vNodes[MAX_GRID_SIZE][MAX_GRID_SIZE];
+	std::vector<Actor*> m_vObjects;
+
+	LayerData()
+	{
+		for (int x = 0; x < MAX_GRID_SIZE; ++x)
+		{
+			for (int y = 0; y < MAX_GRID_SIZE; ++y)
+			{
+				GridNode& tmp = m_vNodes[x][y];
+				if (x > 0)
+				{
+					tmp.pLeft = &m_vNodes[x - 1][y];
+				}
+				if (x <= MAX_GRID_SIZE - 1)
+				{
+					tmp.pRight = &m_vNodes[x + 1][y];
+				}
+				if (y > 0)
+				{
+					tmp.pUp = &m_vNodes[x][y - 1];
+				}
+				if (y <= MAX_GRID_SIZE - 1)
+				{
+					tmp.pDown = &m_vNodes[x][y + 1];
+				}
+			}
+		}
+	}
+
+	void SetGridSize(const int& width, const int& height)
+	{
+		assert(width > 0 && width <= MAX_GRID_SIZE && height > 0 && height <= MAX_GRID_SIZE);
+
+		for (int x = 0; x < width; ++x)
+		{
+			for (int y = 0; y < height; ++y)
+			{
+				GridNode& tmp = m_vNodes[x][y];
+				if (x > 0)
+				{
+					tmp.pLeft = &m_vNodes[x - 1][y];
+				}
+				if (x == width - 1)
+				{
+					tmp.pRight = &m_vNodes[x + 1][y];
+				}
+				if (y > 0)
+				{
+					tmp.pUp = &m_vNodes[x][y - 1];
+				}
+				if (y == height - 1)
+				{
+					tmp.pDown = &m_vNodes[x][y + 1];
+				}
+			}
+		}
+	}
+};
 
 const class TileMap& GetCurrentMap();
 class TileMap
@@ -30,13 +112,13 @@ private:
 	Actor* CreateObjectActor(Tmx::Object* pObject);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
 	TileActor* CreateDefaultTile(int x, int y, const Tmx::TileLayer* pTileLayer);
+	GridEntity* CreateSpawnTile(int x, int y, int layerId, const Tmx::TileLayer* pTileLayer, const std::string& szSpawnType);
 
 private:
 	Tmx::Map* m_pMap;
 	std::vector<sf::Texture*> m_vTilesetTexture;
 	std::vector<Actor*> m_vActors;
-	std::vector<std::vector<Actor*>> m_vTileLayerGrid;
-	std::vector<Actor*> m_vObjectActors;
+	std::vector<LayerData> m_vLayerData;
 
 	ItemManager* m_pItemManager;
 	Player* m_pPlayer;

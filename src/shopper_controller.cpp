@@ -32,7 +32,7 @@ void ShopperController::Update(float dt)
 		Think();
 	}
 
-	m_character->Move(s_characterDeltas[m_moveDir].x, s_characterDeltas[m_moveDir].y, dt);
+	//->Move(s_characterDeltas[m_moveDir].x, s_characterDeltas[m_moveDir].y, dt);
 }
 
 void ShopperController::Think()
@@ -48,7 +48,7 @@ void ShopperController::Think()
 	}
 	else if (m_state == State::LookAround)
 	{
-		m_character->SetFacing((Character::CharacterDirection) (rand() % Character::CharacterDirection::Count));
+		m_character->SetFacing((GridEntity::EDirection) (rand() % GridEntity::EDirection::ED_COUNT));
 		m_waitTime = 2;
 		m_state = State::Idle;
 	}
