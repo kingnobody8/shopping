@@ -12,7 +12,8 @@ static const int SKIN_COUNT = SKIN_ROW * SKIN_COL;
 static const int SKIN_STEP_X = 3 * FRAME_WIDTH;
 static const int SKIN_STEP_Y = 4 * FRAME_HEIGHT;
 
-static const float MOVE_TIME = 0.32f;
+static const float MOVE_TIME = 0.12f;
+static const float ANIME_TIME = 0.05f;
 
 static int s_characterFrameMapping[][4][2] =
 {
@@ -156,7 +157,7 @@ void Character::Update(float dt)
 	else
 	{
 		m_animTimer += dt;
-		if (m_animTimer > 0.16f)
+		if (m_animTimer > ANIME_TIME)
 		{
 			m_animTimer = 0;
 			++m_frame;
