@@ -30,6 +30,9 @@ public:
 	int GetTotalItems() const;
 	int GetNumberOfCheckedItems() const;
 
+	// Get the total cost of the list, does not factor in discounts
+	int GetCostOfList() const;
+
 private:
 	CheckSlot* FindCheckSlotByType(const Item::EType& eType);
 

@@ -73,6 +73,16 @@ int GroceryList::GetNumberOfCheckedItems() const
 	return n;
 }
 
+int GroceryList::GetCostOfList() const
+{
+	int n = 0;
+	for (size_t i = 0; i < m_vCheckSlot.size(); ++i)
+	{
+		n += m_vCheckSlot[i].m_Item.GetCost();
+	}
+	return n;
+}
+
 
 GroceryList::CheckSlot* GroceryList::FindCheckSlotByType(const Item::EType& eType)
 {

@@ -110,14 +110,18 @@ void Game::NewGame()
 	m_timeRemaining = m_totalTime;
 	m_targetTime = 150;
 
-	m_startingMoney = 1000;
-	m_targetMoney = 500;
-	
 	GroceryList gc = GroceryList();
 	gc.AddItem(blue_milk);
 	gc.AddItem(green_eggs);
 	gc.AddItem(white_meat);
 	gc.AddItem(red_candy);
+
+	int costOfList = gc.GetCostOfList();
+	m_startingMoney = (int) (costOfList * 1.1f);
+	m_targetMoney = m_startingMoney - costOfList;
+
+	printf("Starting with $%d\n", m_startingMoney);
+	printf("Target money: $%d\n", m_targetMoney);
 
 	m_player = Customer(gc, m_startingMoney);
 }
