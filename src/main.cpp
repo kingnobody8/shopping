@@ -87,6 +87,14 @@ void UnloadUi(const std::string& path)
 	}
 }
 
+Player* SetLevel(const std::string& path)
+{
+	UnloadUi("assets/main_menu.tmx");
+	LoadLevel(path);
+	printf("Entering %s...\n", path.c_str());
+	return g_currentLevelMap->GetPlayer();
+}
+
 // We keep a separate list of buttons
 // because buttons don't necessarily need to be drawn
 // or updated. They just need to know what and when to fire
@@ -173,6 +181,7 @@ int main(int argc, char** argv)
 	window.setActive();
 
 	LoadUi("assets/main_menu.tmx");
+	std::string nextLevel = "assets/test_shop.tmx";
 
 	Player* man = g_currentLevelMap->GetPlayer();
 
@@ -225,11 +234,18 @@ int main(int argc, char** argv)
 				}
 			}
 
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F1)
+			{
+				nextLevel = "assets/test_shop.tmx";
+			}
+			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F2)
+			{
+				nextLevel = "assets/test_shop2.tmx";
+			}
+
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return)
 			{
-				UnloadUi("assets/main_menu.tmx");
-				LoadLevel("assets/test_shop.tmx");
-				man = g_currentLevelMap->GetPlayer();
+				man = SetLevel(nextLevel);
 			}
 
 			if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
