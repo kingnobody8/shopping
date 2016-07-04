@@ -6,10 +6,13 @@
 #include "item_manager.h"
 
 const class TileMap& GetCurrentMap();
+bool LoadMap(const std::string& mapPath, const std::string& view);
+
 class TileMap
 {
 public:
 	TileMap();
+	~TileMap();
 
 	bool Init(const std::string& szMapPath, ItemManager* pItemManager);
 	void Exit();
@@ -21,11 +24,17 @@ public:
 	int GetTileWidth() const;
 	int GetTileHeight() const;
 
+	int GetWidth() const;
+	int GetHeight() const;
+
 	Actor* GetTileActorAt(int x, int y, int layer) const;
+
+	void Update(float dt);
+	void Draw(sf::RenderWindow& window);
 
 private:
 	void SetupImageLayer(const Tmx::ImageLayer* pLayer);
-	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer);
+	void SetupObjectLayer(const Tmx::ObjectGroup* pLayer, int layerId);
 	void SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId);
 	Actor* CreateObjectActor(Tmx::Object* pObject);
 	const sf::IntRect CreateTileTextureRect(int tileId, int tilesetId);
