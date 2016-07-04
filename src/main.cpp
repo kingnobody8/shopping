@@ -268,6 +268,7 @@ int main(int argc, char** argv)
 
 		if (player != nullptr)
 		{
+			bool hit = false;
 			std::vector<GridEntity*> vGridEnts = g_currentLevelMap->GetGridEntitiesAtTilePos(player->GetGridNode()->grid_position.x, player->GetGridNode()->grid_position.y);
 			for (int i = 0; i < vGridEnts.size(); ++i)
 			{
@@ -276,9 +277,14 @@ int main(int argc, char** argv)
 
 				if (vGridEnts[i]->GetType() == "ItemActor")
 				{
+					hit = true;
 					ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
 					DebugPrintf("%s : %d", pItemActor->GetItem().GetItemName().c_str(), pItemActor->GetItem().GetCost());
 				}
+			}
+			if (!hit)
+			{
+				DebugPrintf("");
 			}
 		}
 
