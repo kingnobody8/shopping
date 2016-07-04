@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 	camMoveRect.width = view.getSize().x / 3.0f;
 	camMoveRect.height = view.getSize().y / 3.0f;
 	//(view.getCenter() - view.getSize() / 3.0f, view.getCenter + view.)
-
+	view.setCenter(man->GetPosition());
 
 	sf::Clock clock;
 	while (window.isOpen())
@@ -265,7 +265,7 @@ int main(int argc, char** argv)
 			float x = (int)(camMoveRect.left + camMoveRect.width / 2.0f);
 			float y = (int)(camMoveRect.top + camMoveRect.height / 2.0f);
 
-			view.setCenter(x, y);
+			//view.setCenter(x, y);
 		}
 
 
@@ -309,7 +309,10 @@ int main(int argc, char** argv)
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
 		sf::Vector2i gridPos = man->GetGridNode()->grid_position;
-		DebugPrintf("TilePos: %dx%d", gridPos.x, gridPos.y);
+		sf::Vector2i pos;
+		pos.x = man->GetPosition().x;
+		pos.y = man->GetPosition().y;
+		DebugPrintf("GridPos: %dx%d\nPixPos: %d%d", gridPos.x, gridPos.y, pos.x, pos.y);
 		//if(showItem)
 		//	DebugPrintf("%s: %d", itemName.c_str(), cost);
 
