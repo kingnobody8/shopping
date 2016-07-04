@@ -50,6 +50,4 @@ private:
 	Item white_meat;
 	Item red_candy;
 	Item blue_eggs;
-
-	GroceryList gc;
 };
