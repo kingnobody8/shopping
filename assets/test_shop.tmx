@@ -49,68 +49,6 @@
 577,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,578,263,264,579,590
 </data>
  </layer>
- <objectgroup name="Object Layer 1" visible="0">
-  <object id="1" name="PlayerSpawn" type="Spawn" x="464" y="464" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Player"/>
-   </properties>
-  </object>
-  <object id="2" name="ItemCollider0" type="ItemCollider" x="404" y="356" width="8" height="8">
-   <properties>
-    <property name="item_type" value="red_milk"/>
-   </properties>
-  </object>
-  <object id="3" name="ItemCollider1" type="ItemCollider" x="404" y="340" width="8" height="8">
-   <properties>
-    <property name="item_type" value="green_eggs"/>
-   </properties>
-  </object>
-  <object id="5" name="ShopperSpawn" type="Spawn" x="312.667" y="351.333" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="6" name="ShopperSpawn" type="Spawn" x="472.5" y="289.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="7" name="ShopperSpawn" type="Spawn" x="279.5" y="215.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="8" name="ShopperSpawn" type="Spawn" x="216" y="154.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="9" name="ShopperSpawn" type="Spawn" x="89" y="252.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="10" name="ShopperSpawn" type="Spawn" x="89.5" y="275" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="11" name="ShopperSpawn" type="Spawn" x="116.5" y="39" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="12" name="ShopperSpawn" type="Spawn" x="476" y="31.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
-  <object id="13" name="ShopperSpawn" type="Spawn" x="103.5" y="393.5" width="16" height="16">
-   <properties>
-    <property name="Entity" value="Shopper"/>
-   </properties>
-  </object>
- </objectgroup>
  <layer name="spawns+collision" width="32" height="32">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
