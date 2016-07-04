@@ -308,7 +308,8 @@ int main(int argc, char** argv)
 
 		window.draw(&camRectVerts[0], camRectVerts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 
-		DebugPrintf("Munny: %d", g_customer->GetMunny());
+		sf::Vector2i gridPos = man->GetGridNode()->grid_position;
+		DebugPrintf("TilePos: %dx%d", gridPos.x, gridPos.y);
 		//if(showItem)
 		//	DebugPrintf("%s: %d", itemName.c_str(), cost);
 

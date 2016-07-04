@@ -55,11 +55,11 @@ void PlayerController::Update(float dt)
 		if (!m_player->IsMoving() && b > GridEntity::EDirection::ED_INVALID && b < GridEntity::EDirection::ED_COUNT)
 		{
 			GridEntity::EDirection eDir = GridEntity::EDirection(b);
-			//if (m_player->CanMove(eDir))
-			//{
-			//	m_player->Move(GridEntity::EDirection(b));
-			//}
-			//else
+			if (m_player->CanMove(eDir))
+			{
+				m_player->Move(GridEntity::EDirection(b));
+			}
+			else
 			{
 				m_player->SetFacing(eDir);
 			}

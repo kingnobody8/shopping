@@ -181,6 +181,7 @@ void TileMap::SetupTileLayer(const Tmx::TileLayer* pLayer, const int& layerId)
 	{
 		for (int y = 0; y < height; ++y)
 		{
+			m_vLayerData[layerId].m_vNodes[x][y].grid_position = sf::Vector2i(x, y);
 			m_vLayerData[layerId].m_vNodes[x][y].position = sf::Vector2i(x * m_pMap->GetTileWidth() + m_pMap->GetTileWidth() / 2, y * m_pMap->GetTileHeight() + m_pMap->GetTileHeight() / 2);
 			if (pLayer->GetTileTilesetIndex(x, y) != -1) //TODO (daniel) for now all tiles are default tiles, they only render
 			{

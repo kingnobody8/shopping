@@ -9,7 +9,7 @@ class GridEntity : public SpriteActor
 public:
 	enum EDirection 
 	{
-		ED_INVALID,
+		ED_INVALID = -1,
 		ED_NORTH,
 		ED_SOUTH,
 		ED_EAST,
