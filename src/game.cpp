@@ -123,6 +123,9 @@ Game::~Game()
 
 void Game::Init()
 {
+	m_timerText.setFont(*g_defaultFont);
+	m_timerText.setColor(sf::Color(120, 128, 128));
+
 	RegisterEvent("START_GAME", [this](void *x) {
 		EndGame();
 		NewGame();
@@ -303,8 +306,8 @@ void Game::EndGame()
 		TextActor* timeText = ui->FindActorByName<TextActor>("TimeText");
 		if (timeText)
 		{
-			int minutes = m_timeRemaining / 60;
-			int seconds = m_timeRemaining - minutes * 60;
+			int minutes = (int) (m_timeRemaining) / 60;
+			int seconds = (int) (m_timeRemaining) - minutes * 60;
 			char buffer[8];
 			sprintf(buffer, "%02d:%02d", minutes, seconds);
 			timeText->m_text.setString(buffer);
@@ -452,6 +455,12 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 								m_player.AddItem(*itemData->m_item, itemData->m_discount);
 								m_player.PrintGroceryList();
 								m_player.PrintInventory();
+
+								const GroceryList& gc = m_player.GetGroceryList();
+								if (gc.GetNumberOfCheckedItems() == gc.GetTotalItems())
+								{
+									EndGame();
+								}
 							}
 							else
 							{
@@ -485,6 +494,29 @@ void Game::DebugPrintItemActor(ItemActor* itemActor)
 	{
 		Item& item = *itemData->m_item;
 		DebugPrintf("%s : %d %s", item.GetItemName().c_str(), (int) (item.GetCost() * itemData->m_discount), itemData->m_discount != 1.0f ? "SALE" : "");
+	}
+}
+
+void Game::Update(float dt)
+{
+	if (IsPlaying())
+	{
+		m_timeRemaining -= dt;
+
+		int minutes = (int) (m_timeRemaining) / 60;
+		int seconds = (int) (m_timeRemaining) -minutes * 60;
+		char buffer[8];
+		sprintf(buffer, "%02d:%02d", minutes, seconds);
+		m_timerText.setString(buffer);
+	}
+}
+
+void Game::Draw(sf::RenderWindow& window)
+{
+	if (IsPlaying())
+	{
+		m_timerText.setPosition(400 - m_timerText.getLocalBounds().width / 2, 0);
+		window.draw(m_timerText);
 	}
 }
 

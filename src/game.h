@@ -29,6 +29,9 @@ public:
 
 	void DebugPrintItemActor(ItemActor* itemActor);
 
+	void Update(float dt);
+	void Draw(sf::RenderWindow& window);
+
 private:
 	Item* FindItemByName(const std::string& name);
 
@@ -81,7 +84,7 @@ private:
 
 	bool m_isPlaying;
 	bool m_isOver;
-	int m_timeRemaining;
+	float m_timeRemaining;
 	int m_totalTime;
 	int m_targetTime;
 	int m_startingMoney;
@@ -96,4 +99,6 @@ private:
 	std::map<std::string, Item::EType> m_stringToItemType;
 	std::map<std::string, Item::EAdjective> m_stringToItemAdjective;
 	Item* m_itemDatabase[Item::EType::ET_COUNT][Item::EAdjective::EA_COUNT];
+
+	sf::Text m_timerText;
 };

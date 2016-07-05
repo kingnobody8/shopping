@@ -206,6 +206,7 @@ int main(int argc, char** argv)
 		{
 			itr->second->Update(dt);
 		}
+		game.Update(dt);
 
 		Player* player = g_currentLevelMap->GetPlayer();
 		if (player)
@@ -257,6 +258,8 @@ int main(int argc, char** argv)
 			window.setView(uiView);
 			itr->second->Draw(window);
 		}
+		window.setView(window.getDefaultView());
+		game.Draw(window);
 
 		sf::Vertex verts[4];
 		verts[1].position.x = 16;
