@@ -77,6 +77,7 @@ private:
 
 	std::map<std::string, StoreData> m_stores;
 	std::vector<std::string> m_itemAvailability[Item::EType::ET_COUNT][Item::EAdjective::EA_COUNT];
+	std::string m_currentStore;
 
 	bool m_isPlaying;
 	bool m_isOver;

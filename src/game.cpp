@@ -126,12 +126,13 @@ void Game::Init()
 	RegisterEvent("START_GAME", [this](void *x) {
 		EndGame();
 		NewGame();
-		SetLevel("assets/test_shop.tmx", m_uiView);
+		SetLevel(m_currentStore, m_uiView);
 	});
 
 	std::vector<std::string> stores =
 	{
 		"assets/test_shop.tmx",
+		"assets/test_shop2.tmx",
 	};
 
 	for (size_t i = 0; i < stores.size(); ++i)
@@ -223,23 +224,37 @@ void Game::NewGame()
 
 	Item* items[Item::EType::ET_COUNT];
 	memset(items, 0, sizeof(Item*) * Item::EType::ET_COUNT);
-	StoreData& store = m_stores.begin()->second;
-	for (auto itr = store.m_items.begin(); itr != store.m_items.end(); ++itr)
+	int mostItems = 0;
+	std::string startingStore = "";
+	for (auto storeItr = m_stores.begin(); storeItr != m_stores.end(); ++storeItr)
 	{
-		if (itr->m_stock > 0 && rand() % 2 == 1)
+		StoreData& store = storeItr->second;
+		int itemsOnList = 0;
+		for (auto itr = store.m_items.begin(); itr != store.m_items.end(); ++itr)
 		{
-			items[itr->m_item->GetType()] = itr->m_item;
+			if (itr->m_stock > 0 && rand() % 2 == 1 && items[itr->m_item->GetType()] == nullptr)
+			{
+				items[itr->m_item->GetType()] = itr->m_item;
+				++itemsOnList;
+			}
+
+			if (rand() % 2 == 1)
+			{
+				itr->m_discount = 0.5f + 0.5f * (rand() / (float) RAND_MAX);
+			}
+			else
+			{
+				itr->m_discount = 1;
+			}
 		}
 
-		if (rand() % 2 == 1)
+		if (itemsOnList > mostItems)
 		{
-			itr->m_discount = 0.5f + 0.5f * (rand() / (float) RAND_MAX);
-		}
-		else
-		{
-			itr->m_discount = 1;
+			startingStore = storeItr->first;
+			mostItems = itemsOnList;
 		}
 	}
+	m_currentStore = startingStore;
 
 	GroceryList gc = GroceryList();
 	for (int itemType = Item::EType::ET_INVALID + 1; itemType != Item::EType::ET_COUNT; ++itemType)
@@ -256,6 +271,7 @@ void Game::NewGame()
 
 	printf("Starting with $%d\n", m_startingMoney);
 	printf("Target money: $%d\n", m_targetMoney);
+	printf("Starting in %s (%d items)\n", m_currentStore.c_str(), mostItems);
 
 	m_player = Customer(gc, m_startingMoney);
 
@@ -387,7 +403,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 		{
 			EndGame();
 			NewGame();
-			SetLevel("assets/test_shop.tmx", m_uiView);
+			SetLevel(m_currentStore, m_uiView);
 		}
 		if (key == sf::Keyboard::E)
 		{
@@ -428,7 +444,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 					{
 						ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
 						int id = pItemActor->GetId();
-						ItemData* itemData = m_stores["assets/test_shop.tmx"].FindItemDataById(id);
+						ItemData* itemData = m_stores[m_currentStore].FindItemDataById(id);
 						if (itemData)
 						{
 							if (m_player.CanAddItem(*itemData->m_item))
@@ -456,7 +472,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 		if (key == sf::Keyboard::Return)
 		{
 			NewGame();
-			SetLevel("assets/test_shop.tmx", m_gameView);
+			SetLevel(m_currentStore, m_gameView);
 		}
 	}
 }
@@ -464,7 +480,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 void Game::DebugPrintItemActor(ItemActor* itemActor)
 {
 	int id = itemActor->GetId();
-	ItemData* itemData = m_stores["assets/test_shop.tmx"].FindItemDataById(id);
+	ItemData* itemData = m_stores[m_currentStore].FindItemDataById(id);
 	if (itemData)
 	{
 		Item& item = *itemData->m_item;
