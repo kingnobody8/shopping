@@ -10,7 +10,7 @@ public:
 	Customer(const GroceryList& GroceryList, const int& nMunny);
 
 	bool CanAddItem(const Item& item);
-	void AddItem(const Item& item);
+	void AddItem(const Item& item, float discount);
 
 	inline const int& GetMunny() const { return m_nMunny; }
 	inline const GroceryList& GetGroceryList() const { return m_GroceryList; }

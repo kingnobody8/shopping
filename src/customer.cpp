@@ -18,14 +18,14 @@ bool Customer::CanAddItem(const Item& item)
 	return m_GroceryList.GetItemCheckType(item.GetType()) == GroceryList::ECheckState::ECS_EMPTY && item.GetCost() <= m_nMunny;
 }
 
-void Customer::AddItem(const Item& item)
+void Customer::AddItem(const Item& item, float discount)
 {
 	assert(item.IsValid() && CanAddItem(item));
 
 	m_vInventory.push_back(item);
 	m_GroceryList.CheckoutItem(item);
 
-	m_nMunny -= item.GetCost();
+	m_nMunny -= (int) (item.GetCost() * discount);
 }
 
 

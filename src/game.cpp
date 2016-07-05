@@ -18,21 +18,6 @@ static void PrintCustomer(Customer& c)
 	c.PrintInventory();
 }
 
-static void AddItemAttempt(Customer& c, Item& i)
-{
-	printf("Adding item: %d %s\n", i.GetCost(), i.GetItemName().c_str());
-	printf("Customer wallet: %d\n", c.GetMunny());
-	bool canAdd = c.CanAddItem(i);
-	printf("CanAddItem: %d\n", canAdd);
-
-	if (canAdd)
-	{
-		c.AddItem(i);
-		PrintCustomer(c);
-	}
-	printf("\n\n");
-}
-
 static const int MAX_FLAVORS = 1;
 static const char* s_flavorTexts[][MAX_FLAVORS] =
 {
@@ -245,6 +230,15 @@ void Game::NewGame()
 		{
 			items[itr->m_item->GetType()] = itr->m_item;
 		}
+
+		if (rand() % 2 == 1)
+		{
+			itr->m_discount = 0.5f + 0.5f * (rand() / (float) RAND_MAX);
+		}
+		else
+		{
+			itr->m_discount = 1;
+		}
 	}
 
 	GroceryList gc = GroceryList();
@@ -439,7 +433,7 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 						{
 							if (m_player.CanAddItem(*itemData->m_item))
 							{
-								m_player.AddItem(*itemData->m_item);
+								m_player.AddItem(*itemData->m_item, itemData->m_discount);
 								m_player.PrintGroceryList();
 								m_player.PrintInventory();
 							}
@@ -474,7 +468,7 @@ void Game::DebugPrintItemActor(ItemActor* itemActor)
 	if (itemData)
 	{
 		Item& item = *itemData->m_item;
-		DebugPrintf("%s : %d", item.GetItemName().c_str(), item.GetCost());
+		DebugPrintf("%s : %d %s", item.GetItemName().c_str(), (int) (item.GetCost() * itemData->m_discount), itemData->m_discount != 1.0f ? "SALE" : "");
 	}
 }
 
