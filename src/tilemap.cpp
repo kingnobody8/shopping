@@ -76,8 +76,14 @@ void TileMap::Exit()
 	{
 		delete m_vActors[i];
 	}
+
+	for (size_t i = 0; i < m_vButtons.size(); ++i)
+	{
+		delete m_vButtons[i];
+	}
 	m_vActors.clear();
 	m_vLayerData.clear();
+	m_vButtons.clear();
 
 	delete m_pMap;
 	m_pMap = nullptr;
@@ -132,6 +138,11 @@ Actor* TileMap::FindActorByName(const std::string& name) const
 		}
 	}
 	return nullptr;
+}
+
+const std::vector<Button*>& TileMap::GetButtons() const
+{
+	return m_vButtons;
 }
 
 void TileMap::Update(float dt)
@@ -332,7 +343,8 @@ Actor* TileMap::CreateObjectActor(Tmx::Object* pObject, sf::View* view)
 		if (props.HasProperty("Button"))
 		{
 			const std::string& eventName = props.GetStringProperty("Button");
-			CreateButton(actor, view, eventName);
+			Button *button = CreateButton(actor, view, eventName);
+			m_vButtons.push_back(button);
 		}
 	}
 

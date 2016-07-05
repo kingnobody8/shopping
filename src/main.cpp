@@ -8,7 +8,6 @@
 #include "button.h"
 #include "text_actor.h"
 #include <vector>
-//#include <functional>
 #include "customer.h"
 #include "Tmx.h.in"
 #include "tilemap.h"
@@ -94,22 +93,6 @@ TileMap* FindUi(const std::string& path)
 	return nullptr;
 }
 
-// We keep a separate list of buttons
-// because buttons don't necessarily need to be drawn
-// or updated. They just need to know what and when to fire
-std::vector<Button*> g_buttons;
-
-void RegisterButton(Button* button)
-{
-	g_buttons.push_back(button);
-}
-
-void DestroyButton(Button* button)
-{
-	g_buttons.erase(std::find(g_buttons.begin(), g_buttons.end(), button));
-	delete button;
-}
-
 int main(int argc, char** argv)
 {
 	g_defaultFont = new sf::Font;
@@ -139,7 +122,7 @@ int main(int argc, char** argv)
 	sf::View view(sf::FloatRect(-w / 2.0f, -h / 2.0f, w, h));
 
 	LoadUi("assets/main_menu.tmx", &uiView);
-	Game game;
+	Game game(uiView, view);
 	game.Init();
 
 	Player* man = g_currentLevelMap->GetPlayer();
@@ -179,10 +162,34 @@ int main(int argc, char** argv)
 
 			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
+				// for now only allow one button to be triggered per frame
+				bool buttonTriggered = false;
 				const sf::Event::MouseButtonEvent &mbe = event.mouseButton;
-				for (size_t i = 0; i < g_buttons.size(); ++i)
+				// check all the buttons on all the tilemaps to see if any buttons were pressed
+				for (auto itr = g_uiMaps.begin(); itr != g_uiMaps.end(); ++itr)
 				{
-					g_buttons[i]->CheckMousePress(mbe, window);
+					auto buttons = itr->second->GetButtons();
+					for (auto bitr = buttons.begin(); bitr != buttons.end(); ++bitr)
+					{
+						if ((*bitr)->CheckMousePress(mbe, window))
+						{
+							buttonTriggered = true;
+							goto button_check_break;
+						}
+					}
+				}
+				button_check_break:
+				if (!buttonTriggered)
+				{
+					auto buttons = g_currentLevelMap->GetButtons();
+					for (auto itr = buttons.begin(); itr != buttons.end(); ++itr)
+					{
+						if ((*itr)->CheckMousePress(mbe, window))
+						{
+							buttonTriggered = true;
+							break;
+						}
+					}
 				}
 			}
 

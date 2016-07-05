@@ -10,7 +10,6 @@
 #include "actor.h"
 
 class Button;
-void RegisterButton(Button *button);
 
 Button* CreateButton(Actor *actor = nullptr, sf::View *view = nullptr, const std::string& event = "");
 
@@ -35,7 +34,7 @@ public:
 	void SetActor(Actor *Actor);
 	void SetView(sf::View *view);
 	// Fires an event/callback if a mouse button is detected
-	void CheckMousePress(const sf::Event::MouseButtonEvent& mbe, sf::RenderWindow& window) const;
+	bool CheckMousePress(const sf::Event::MouseButtonEvent& mbe, sf::RenderWindow& window) const;
 
 private:
 	// sprite to use as the hitbox

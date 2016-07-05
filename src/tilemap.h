@@ -1,4 +1,5 @@
 #pragma once
+#include "button.h"
 #include "tile_actor.h"
 #include "Tmx.h.in"
 #include <map>
@@ -122,6 +123,7 @@ public:
 	{
 		return static_cast<TActor*>(FindActorByName(name));
 	}
+	const std::vector<Button*>& GetButtons() const;
 
 	void Update(float dt);
 	void Draw(sf::RenderWindow& window);
@@ -141,6 +143,7 @@ private:
 private:
 	Tmx::Map* m_pMap;
 	std::vector<sf::Texture*> m_vTilesetTexture;
+	std::vector<Button*> m_vButtons;		// all the buttons associated with the map
 	std::vector<Actor*> m_vActors;			//list of all actors instantiated during map load
 	std::vector<LayerData> m_vLayerData;	//list of layers with grid data
 

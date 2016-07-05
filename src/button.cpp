@@ -2,9 +2,7 @@
 
 Button* CreateButton(Actor *actor, sf::View *view, const std::string& event)
 {
-	Button* button = new Button(actor, view, event);
-	RegisterButton(button);
-	return button;
+	return new Button(actor, view, event);
 }
 
 Button::Button()
@@ -52,19 +50,17 @@ void Button::SetView(sf::View *view)
     this->m_view = view;
 }
 
-void Button::CheckMousePress(const sf::Event::MouseButtonEvent& mbe, sf::RenderWindow& window) const
+bool Button::CheckMousePress(const sf::Event::MouseButtonEvent& mbe, sf::RenderWindow& window) const
 {
 	sf::Vector2f& vec = window.mapPixelToCoords(sf::Vector2i(mbe.x, mbe.y), *this->m_view);
 	// button should have an actor when checking for collisisions
 	assert(this->m_actor != nullptr);
     if(!this->CanFire() || !this->m_actor->GetRect().contains(vec.x, vec.y))
     {
-        return;
+        return false;
     }
 
-    if(this->m_event != "")
-    {
-        FireEvent(this->m_event, nullptr);
-        printf("Fired event: %s\n", this->m_event.c_str());
-    }
+	printf("Fired event: %s\n", this->m_event.c_str());
+	FireEvent(this->m_event, nullptr);
+	return true;
 }
