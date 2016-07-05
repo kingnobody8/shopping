@@ -413,7 +413,7 @@ ItemActor* TileMap::CreateItemActor(int x, int y, int layerId, const Tmx::TileLa
 
 	AddGridEntityToGrid(pItemActor, layerId, x, y);
 
-	pItemActor->Init(szItemType, 300); //TODO (daniel) figure out where cost should be init
+	pItemActor->Init(szItemType, pTileLayer->GetTileId(x, y));
 
 	//TODO (remove this eventually
 	{

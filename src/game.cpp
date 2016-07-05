@@ -1,5 +1,7 @@
 #include "game.h"
 #include "text_actor.h"
+#include "tokenizer.h"
+#include "debug_text.h"
 
 static void SetLevel(const std::string& path, sf::View* view)
 {
@@ -84,7 +86,7 @@ static const sf::Color s_rankColors[] =
 	{231, 76, 60},
 };
 
-Game::Game()
+Game::Game(sf::View& uiView, sf::View& gameView)
 	: m_isPlaying(false)
 	, m_isOver(false)
 	, m_timeRemaining(0)
@@ -92,25 +94,42 @@ Game::Game()
 	, m_targetTime(0)
 	, m_startingMoney(0)
 	, m_targetMoney(0)
-	, blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500)
-	, green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750)
-	, white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000)
-	, red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250)
-	, blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300)
-	, m_uiView(nullptr)
-	, m_gameView(nullptr)
-{}
-
-Game::Game(sf::View& uiView, sf::View& gameView)
-	: m_isPlaying(false)
-	, blue_milk(Item::EAdjective::EA_BLUE, Item::EType::ET_MILK, 500)
-	, green_eggs(Item::EAdjective::EA_GREEN, Item::EType::ET_EGGS, 750)
-	, white_meat(Item::EAdjective::EA_WHITE, Item::EType::ET_MEAT, 1000)
-	, red_candy(Item::EAdjective::EA_RED, Item::EType::ET_CANDY, 250)
-	, blue_eggs(Item::EAdjective::EA_BLUE, Item::EType::ET_EGGS, 300)
 	, m_uiView(&uiView)
 	, m_gameView(&gameView)
-{}
+{
+	m_baseItemCosts[Item::EType::ET_MILK ] = 150;
+	m_baseItemCosts[Item::EType::ET_EGGS ] = 200;
+	m_baseItemCosts[Item::EType::ET_FRUIT] = 100;
+	m_baseItemCosts[Item::EType::ET_MEAT ] = 400;
+	m_baseItemCosts[Item::EType::ET_SODA ] = 50;
+	m_baseItemCosts[Item::EType::ET_CANDY] = 75;
+
+	m_adjItemCostModifiers[Item::EAdjective::EA_BLUE ] = 1.0f;
+	m_adjItemCostModifiers[Item::EAdjective::EA_RED	 ] = 1.25f;
+	m_adjItemCostModifiers[Item::EAdjective::EA_GREEN] = 1.5f;
+	m_adjItemCostModifiers[Item::EAdjective::EA_WHITE] = 1.75f;
+
+	m_stringToItemType["milk"] = Item::EType::ET_MILK;
+	m_stringToItemType["eggs"] = Item::EType::ET_EGGS;
+	m_stringToItemType["fruit"] = Item::EType::ET_FRUIT;
+	m_stringToItemType["meat"] = Item::EType::ET_MEAT;
+	m_stringToItemType["soda"] = Item::EType::ET_SODA;
+	m_stringToItemType["candy"] = Item::EType::ET_CANDY;
+
+	m_stringToItemAdjective["blue"] = Item::EAdjective::EA_BLUE;
+	m_stringToItemAdjective["red"] = Item::EAdjective::EA_RED;
+	m_stringToItemAdjective["green"] = Item::EAdjective::EA_GREEN;
+	m_stringToItemAdjective["white"] = Item::EAdjective::EA_WHITE;
+
+	for (int itemType = Item::EType::ET_INVALID + 1; itemType != Item::EType::ET_COUNT; ++itemType)
+	{
+		for (int itemAdj = Item::EAdjective::EA_INVALID + 1; itemAdj != Item::EAdjective::EA_COUNT; ++itemAdj)
+		{
+			int cost = (int) (m_baseItemCosts[itemType] * m_adjItemCostModifiers[itemAdj]);
+			m_itemDatabase[itemType][itemAdj] = new Item((Item::EAdjective) itemAdj, (Item::EType) itemType, cost);
+		}
+	}
+}
 
 Game::~Game()
 {
@@ -124,6 +143,64 @@ void Game::Init()
 		NewGame();
 		SetLevel("assets/test_shop.tmx", m_uiView);
 	});
+
+	std::vector<std::string> stores =
+	{
+		"assets/test_shop.tmx",
+	};
+
+	for (size_t i = 0; i < stores.size(); ++i)
+	{
+		Tmx::Map map;
+		map.ParseFile(stores[i]);
+		if (map.HasError())
+		{
+			continue;
+		}
+
+		StoreData& storeData = m_stores[stores[i]];
+
+		const std::vector<Tmx::Layer*>& layers = map.GetLayers();
+		for (size_t j = 0; j < layers.size(); ++j)
+		{
+			Tmx::Layer* layer = layers[j];
+			if (layer->GetName() == "items")
+			{
+				Tmx::TileLayer* tileLayer = (Tmx::TileLayer*) layer;
+				
+				int width = tileLayer->GetWidth();
+				int height = tileLayer->GetHeight();
+
+				for (int x = 0; x < width; ++x)
+				{
+					for (int y = 0; y < height; ++y)
+					{
+						if (tileLayer->GetTileTilesetIndex(x, y) != -1)
+						{
+							int tileId = tileLayer->GetTileId(x, y);
+							int tilesetId = tileLayer->GetTileTilesetIndex(x, y);
+							const Tmx::Tileset* tileset = map.GetTileset(tilesetId);
+							const Tmx::Tile* tile = tileset->GetTile(tileId);
+							if (tile != nullptr)
+							{
+								const Tmx::PropertySet& propSet = tile->GetProperties();
+
+								if (propSet.HasProperty("item_type"))
+								{
+									std::string itemType = propSet.GetStringProperty("item_type");
+									Item* item = FindItemByName(itemType);
+
+									storeData.m_items.push_back(ItemData(tileId, item));
+								}
+							}
+						}
+					}
+				}
+
+				break;
+			}
+		}
+	}
 }
 
 void Game::NewGame()
@@ -137,11 +214,47 @@ void Game::NewGame()
 	m_timeRemaining = m_totalTime;
 	m_targetTime = 150;
 
+	// Clear item availability
+	for (int itemType = Item::EType::ET_INVALID + 1; itemType != Item::EType::ET_COUNT; ++itemType)
+	{
+		for (int itemAdj = Item::EAdjective::EA_INVALID + 1; itemAdj != Item::EAdjective::EA_COUNT; ++itemAdj)
+		{
+			m_itemAvailability[itemType][itemAdj].clear();
+		}
+	}
+
+	// Stock stores
+	for (auto itr = m_stores.begin(); itr != m_stores.end(); ++itr)
+	{
+		for (auto jtr = itr->second.m_items.begin(); jtr != itr->second.m_items.end(); ++jtr)
+		{
+			jtr->m_stock = rand() % 5;
+			if (jtr->m_stock > 0)
+			{
+				m_itemAvailability[jtr->m_item->GetType()][jtr->m_item->GetAdj()].push_back(itr->first);
+			}
+		}
+	}
+
+	Item* items[Item::EType::ET_COUNT];
+	memset(items, 0, sizeof(Item*) * Item::EType::ET_COUNT);
+	StoreData& store = m_stores.begin()->second;
+	for (auto itr = store.m_items.begin(); itr != store.m_items.end(); ++itr)
+	{
+		if (itr->m_stock > 0 && rand() % 2 == 1)
+		{
+			items[itr->m_item->GetType()] = itr->m_item;
+		}
+	}
+
 	GroceryList gc = GroceryList();
-	gc.AddItem(blue_milk);
-	gc.AddItem(green_eggs);
-	gc.AddItem(white_meat);
-	gc.AddItem(red_candy);
+	for (int itemType = Item::EType::ET_INVALID + 1; itemType != Item::EType::ET_COUNT; ++itemType)
+	{
+		if (items[itemType])
+		{
+			gc.AddItem(*items[itemType]);
+		}
+	}
 
 	int costOfList = gc.GetCostOfList();
 	m_startingMoney = (int) (costOfList * 1.1f);
@@ -151,6 +264,9 @@ void Game::NewGame()
 	printf("Target money: $%d\n", m_targetMoney);
 
 	m_player = Customer(gc, m_startingMoney);
+
+	m_player.PrintGroceryList();
+	m_player.PrintInventory();
 }
 
 void Game::EndGame()
@@ -273,26 +389,6 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 {
 	if (IsStarted())
 	{
-		if (key == sf::Keyboard::Num1)
-		{
-			AddItemAttempt(m_player, blue_milk);
-		}
-		if (key == sf::Keyboard::Num2)
-		{
-			AddItemAttempt(m_player, green_eggs);
-		}
-		if (key == sf::Keyboard::Num3)
-		{
-			AddItemAttempt(m_player, white_meat);
-		}
-		if (key == sf::Keyboard::Num4)
-		{
-			AddItemAttempt(m_player, red_candy);
-		}
-		if (key == sf::Keyboard::Num5)
-		{
-			AddItemAttempt(m_player, blue_eggs);
-		}
 		if (key == sf::Keyboard::R)
 		{
 			EndGame();
@@ -337,15 +433,24 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 					if (vGridEnts[i]->GetType() == "ItemActor")
 					{
 						ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
-						if (m_player.CanAddItem(pItemActor->GetItem()))
+						int id = pItemActor->GetId();
+						ItemData* itemData = m_stores["assets/test_shop.tmx"].FindItemDataById(id);
+						if (itemData)
 						{
-							m_player.AddItem(pItemActor->GetItem());
-							m_player.PrintGroceryList();
-							m_player.PrintInventory();
+							if (m_player.CanAddItem(*itemData->m_item))
+							{
+								m_player.AddItem(*itemData->m_item);
+								m_player.PrintGroceryList();
+								m_player.PrintInventory();
+							}
+							else
+							{
+								//TODO (daniel) put bad beep here + message
+							}
 						}
 						else
 						{
-							//TODO (daniel) put bad beep here + message
+							printf("Missing item id = %d\n", id);
 						}
 					}
 				}
@@ -360,4 +465,52 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 			SetLevel("assets/test_shop.tmx", m_gameView);
 		}
 	}
+}
+
+void Game::DebugPrintItemActor(ItemActor* itemActor)
+{
+	int id = itemActor->GetId();
+	ItemData* itemData = m_stores["assets/test_shop.tmx"].FindItemDataById(id);
+	if (itemData)
+	{
+		Item& item = *itemData->m_item;
+		DebugPrintf("%s : %d", item.GetItemName().c_str(), item.GetCost());
+	}
+}
+
+Item* Game::FindItemByName(const std::string& name)
+{
+	Tokenizer tokens(name, "_");
+
+	if (tokens.size() != 2)
+	{
+		printf("Invalid item: %s", name.c_str());
+		return nullptr;
+	}
+
+	const std::string& prefix = tokens[0];
+	const std::string& suffix = tokens[1];
+
+	Item::EType itemType = Item::EType::ET_INVALID;
+	Item::EAdjective itemAdj = Item::EAdjective::EA_INVALID;
+
+	auto itrSuffix = m_stringToItemType.find(suffix);
+	if (itrSuffix != m_stringToItemType.end())
+	{
+		itemType = itrSuffix->second;
+	}
+
+	auto itrPrefix = m_stringToItemAdjective.find(prefix);
+	if (itrPrefix != m_stringToItemAdjective.end())
+	{
+		itemAdj = itrPrefix->second;
+	}
+
+	if (itemType == Item::EType::ET_INVALID || itemAdj == Item::EAdjective::EA_INVALID)
+	{
+		printf("Unknown item: %s", name.c_str());
+		return nullptr;
+	}
+
+	return m_itemDatabase[itemType][itemAdj];
 }

@@ -263,6 +263,7 @@
     <ClInclude Include="..\..\src\tilemap.h" />
     <ClInclude Include="..\..\src\tile_actor.h" />
     <ClInclude Include="..\..\src\text_actor.h" />
+    <ClInclude Include="..\..\src\tokenizer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\lib\tmx_parser\Tmx.h.in" />

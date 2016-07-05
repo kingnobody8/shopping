@@ -298,7 +298,7 @@ int main(int argc, char** argv)
 				{
 					hit = true;
 					ItemActor* pItemActor = static_cast<ItemActor*>(vGridEnts[i]);
-					DebugPrintf("%s : %d", pItemActor->GetItem().GetItemName().c_str(), pItemActor->GetItem().GetCost());
+					game.DebugPrintItemActor(pItemActor);
 				}
 			}
 			if (!hit)

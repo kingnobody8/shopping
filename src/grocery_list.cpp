@@ -51,7 +51,7 @@ void GroceryList::PrintList() const
 {
 	for (size_t i = 0; i < m_vCheckSlot.size(); ++i)
 	{
-		printf("%d\t%s\t%s\n", i, m_vCheckSlot[i].m_Item.GetItemName().c_str(), GetCheckStateString(m_vCheckSlot[i].m_eCheckState).c_str());
+		printf("%d\t%s\t%s ($%d)\n", i, m_vCheckSlot[i].m_Item.GetItemName().c_str(), GetCheckStateString(m_vCheckSlot[i].m_eCheckState).c_str(), m_vCheckSlot[i].m_Item.GetCost());
 	}
 }
 

@@ -13,7 +13,6 @@ TileMap* FindUi(const std::string& path);
 class Game
 {
 public:
-	Game();
 	Game(sf::View& uiView, sf::View& gameView);
 
 	~Game();
@@ -28,7 +27,11 @@ public:
 	bool IsOver() const { return m_isOver; }
 	bool IsStarted() const { return m_isPlaying || m_isOver; }
 
+	void DebugPrintItemActor(ItemActor* itemActor);
+
 private:
+	Item* FindItemByName(const std::string& name);
+
 	enum ScoreRank
 	{
 		RankSSS,
@@ -41,6 +44,40 @@ private:
 		RankE,
 	};
 
+	struct ItemData
+	{
+		ItemData(int tileId, Item* item)
+			: m_tileId(tileId)
+			, m_item(item)
+			, m_discount(1.0f)
+			, m_stock(0)
+		{}
+
+		int m_tileId;
+		Item* m_item;
+		float m_discount;
+		int m_stock;
+	};
+
+	struct StoreData
+	{
+		ItemData* FindItemDataById(int id)
+		{
+			for (size_t i = 0; i < m_items.size(); ++i)
+			{
+				if (m_items[i].m_tileId == id)
+				{
+					return &m_items[i];
+				}
+			}
+			return nullptr;
+		}
+		std::vector<ItemData> m_items;
+	};
+
+	std::map<std::string, StoreData> m_stores;
+	std::vector<std::string> m_itemAvailability[Item::EType::ET_COUNT][Item::EAdjective::EA_COUNT];
+
 	bool m_isPlaying;
 	bool m_isOver;
 	int m_timeRemaining;
@@ -50,11 +87,12 @@ private:
 	int m_targetMoney;
 	Customer m_player;
 
-	Item blue_milk;
-	Item green_eggs;
-	Item white_meat;
-	Item red_candy;
-	Item blue_eggs;
 	sf::View* m_uiView;
 	sf::View* m_gameView;
+
+	int m_baseItemCosts[Item::EType::ET_COUNT];
+	float m_adjItemCostModifiers[Item::EAdjective::EA_COUNT];
+	std::map<std::string, Item::EType> m_stringToItemType;
+	std::map<std::string, Item::EAdjective> m_stringToItemAdjective;
+	Item* m_itemDatabase[Item::EType::ET_COUNT][Item::EAdjective::EA_COUNT];
 };

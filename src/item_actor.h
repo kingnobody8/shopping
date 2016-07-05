@@ -8,18 +8,17 @@ class ItemActor : public TileActor
 public:
 	ItemActor();
 	
-	void Init(const std::string& szItemType, const int& cost);
+	void Init(const std::string& szItemType, int id);
 
 	virtual void Update(float dt);
 	virtual void Draw(sf::RenderWindow& window);
 
 	void PurchaseItem(Customer* pCustomer);
 
-	const Item& GetItem() { return *m_pItem; }
+	int GetId() { return m_id; }
 
 private:
 	Item::EAdjective m_eAdj;
 	Item::EType	m_eType;
-
-	Item* m_pItem;
+	int m_id;
 };

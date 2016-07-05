@@ -8,7 +8,7 @@
 ItemActor::ItemActor()
 	: m_eAdj(Item::EAdjective::EA_INVALID)
 	, m_eType(Item::EType::ET_INVALID)
-	, m_pItem(nullptr)
+	, m_id(-1)
 {
 	m_szType = "ItemActor";
 }
@@ -51,7 +51,7 @@ void ItemActor::Draw(sf::RenderWindow& window)
 	window.draw(&verts[0], verts.getVertexCount(), sf::PrimitiveType::LinesStrip);
 }
 
-void ItemActor::Init(const std::string& szItemType, const int& cost)
+void ItemActor::Init(const std::string& szItemType, int id)
 {
 	size_t index = szItemType.find_first_of("_");
 	std::string szAdj = std::string(szItemType.begin(), szItemType.begin() + index);
@@ -61,17 +61,17 @@ void ItemActor::Init(const std::string& szItemType, const int& cost)
 	m_eType = Item::GetTypeFromString(szType);
 	assert(m_eAdj != Item::EAdjective::EA_INVALID && m_eType != Item::EType::ET_INVALID);
 
-	m_pItem = new Item(m_eAdj, m_eType, cost);
+	m_id = id;
 }
 
 void ItemActor::PurchaseItem(Customer* pCustomer)
 {
-	if (pCustomer->CanAddItem(*m_pItem))
+	/*if (pCustomer->CanAddItem(*m_pItem))
 	{
 		pCustomer->AddItem(*m_pItem);
 		pCustomer->PrintGroceryList();
 		pCustomer->PrintInventory();
-	}
+	}*/
 
 	//pCustomer->CanAddItem()
 }
