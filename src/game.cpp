@@ -520,6 +520,12 @@ void Game::Update(float dt)
 	{
 		m_timeRemaining -= dt;
 
+		if (m_timeRemaining <= 0)
+		{
+			m_timeRemaining = 0;
+			EndGame();
+		}
+
 		int minutes = (int) (m_timeRemaining) / 60;
 		int seconds = (int) (m_timeRemaining) -minutes * 60;
 		char buffer[8];
