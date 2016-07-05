@@ -71,6 +71,12 @@ static const sf::Color s_rankColors[] =
 	{231, 76, 60},
 };
 
+static std::vector<std::string> s_stores =
+{
+	"assets/test_shop.tmx",
+	"assets/test_shop2.tmx",
+};
+
 Game::Game(sf::View& uiView, sf::View& gameView)
 	: m_isPlaying(false)
 	, m_isOver(false)
@@ -132,22 +138,16 @@ void Game::Init()
 		SetLevel(m_currentStore, m_uiView);
 	});
 
-	std::vector<std::string> stores =
-	{
-		"assets/test_shop.tmx",
-		"assets/test_shop2.tmx",
-	};
-
-	for (size_t i = 0; i < stores.size(); ++i)
+	for (size_t i = 0; i < s_stores.size(); ++i)
 	{
 		Tmx::Map map;
-		map.ParseFile(stores[i]);
+		map.ParseFile(s_stores[i]);
 		if (map.HasError())
 		{
 			continue;
 		}
 
-		StoreData& storeData = m_stores[stores[i]];
+		StoreData& storeData = m_stores[s_stores[i]];
 
 		const std::vector<Tmx::Layer*>& layers = map.GetLayers();
 		for (size_t j = 0; j < layers.size(); ++j)
@@ -402,6 +402,23 @@ void Game::OnKeyReleased(sf::Keyboard::Key key)
 {
 	if (IsStarted())
 	{
+		if (key == sf::Keyboard::Num1)
+		{
+			if (m_currentStore != s_stores[0])
+			{
+				m_currentStore = s_stores[0];
+				SetLevel(m_currentStore, m_uiView);
+			}
+		}
+		if (key == sf::Keyboard::Num2)
+		{
+			if (m_currentStore != s_stores[1])
+			{
+				m_currentStore = s_stores[1];
+				SetLevel(m_currentStore, m_uiView);
+			}
+		}
+
 		if (key == sf::Keyboard::R)
 		{
 			EndGame();
