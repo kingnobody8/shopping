@@ -3,6 +3,7 @@
 #include "customer.h"
 #include "event.h"
 #include "tilemap.h"
+#include "prng.h"
 
 bool LoadLevel(const std::string& path, sf::View* view);
 void UnloadLevel();
@@ -101,4 +102,11 @@ private:
 	Item* m_itemDatabase[Item::EType::ET_COUNT][Item::EAdjective::EA_COUNT];
 
 	sf::Text m_timerText;
+
+	PRNG m_rng;
+	union
+	{
+		char m_seedText[16];
+		PRNG::seed_t m_seed;
+	};
 };

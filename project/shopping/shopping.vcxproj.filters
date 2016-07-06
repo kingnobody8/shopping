@@ -189,6 +189,9 @@
     <ClCompile Include="..\..\src\button.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\prng.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\event.h">
@@ -357,6 +360,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tokenizer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\prng.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -120,6 +120,9 @@ Game::Game(sf::View& uiView, sf::View& gameView)
 			m_itemDatabase[itemType][itemAdj] = new Item((Item::EAdjective) itemAdj, (Item::EType) itemType, cost);
 		}
 	}
+
+	strncpy(m_seedText, "theshoppinggame ", 16);
+	m_rng.SetSeed(m_seed);
 }
 
 Game::~Game()
@@ -217,7 +220,7 @@ void Game::NewGame()
 	{
 		for (auto jtr = itr->second.m_items.begin(); jtr != itr->second.m_items.end(); ++jtr)
 		{
-			jtr->m_stock = rand() % 5;
+			jtr->m_stock = m_rng.RandomInRange(0, 5);
 			if (jtr->m_stock > 0)
 			{
 				m_itemAvailability[jtr->m_item->GetType()][jtr->m_item->GetAdj()].push_back(itr->first);
@@ -235,15 +238,15 @@ void Game::NewGame()
 		int itemsOnList = 0;
 		for (auto itr = store.m_items.begin(); itr != store.m_items.end(); ++itr)
 		{
-			if (itr->m_stock > 0 && rand() % 2 == 1 && items[itr->m_item->GetType()] == nullptr)
+			if (itr->m_stock > 0 && m_rng.NextBool() && items[itr->m_item->GetType()] == nullptr)
 			{
 				items[itr->m_item->GetType()] = itr->m_item;
 				++itemsOnList;
 			}
 
-			if (rand() % 2 == 1)
+			if (m_rng.NextBool())
 			{
-				itr->m_discount = 0.5f + 0.5f * (rand() / (float) RAND_MAX);
+				itr->m_discount = m_rng.RandomInRange(0.5f, 1.0f);
 			}
 			else
 			{
@@ -392,7 +395,7 @@ void Game::EndGame()
 		TextActor* flavorText = ui->FindActorByName<TextActor>("FlavorText");
 		if (flavorText)
 		{
-			const char* txt = s_flavorTexts[rank][rand() % MAX_FLAVORS];
+			const char* txt = s_flavorTexts[rank][m_rng.NextIndex(MAX_FLAVORS)];
 			flavorText->m_text.setString(txt);
 		}
 	}
